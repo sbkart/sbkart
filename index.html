@@ -166,7 +166,7 @@ footer {
 <section class="products">
   <h2>Popular Products</h2>
 
-  <div class="product-grid">
+  <div class="product-grid" id="productGrid">
 
     <div class="product">
       <div class="product-img">👕</div>
@@ -203,12 +203,13 @@ footer {
   © 2026 SBKART
 </footer>
 <script type="module">
-  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import {
+    getFirestore,
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-  // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDUtjrUO2tcMYtgPFjzfLwMk_c37DytwRA",
     authDomain: "sbkart-fa406.firebaseapp.com",
@@ -218,8 +219,29 @@ footer {
     appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-</script>
+  const db = getFirestore(app);
+
+  const productGrid = document.getElementById("productGrid");
+
+  async function loadProducts() {
+    const snapshot = await getDocs(collection(db, "products"));
+
+    snapshot.forEach((doc) => {
+      const product = doc.data();
+
+      productGrid.innerHTML += `
+        <div class="product">
+          <div class="product-img">🛍️</div>
+          <h3>${product.name}</h3>
+          <div class="price">₹${product.price || 0}</div>
+          <button>Buy Now</button>
+        </div>
+      `;
+    });
+  }
+
+  loadProducts();
+        </script>
 </body>
 </html>
