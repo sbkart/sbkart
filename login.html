@@ -3,148 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Login - SBKART</title>
+  <title>SBKART - Login</title>
 
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 450px;
-      margin: 40px auto;
     }
 
     .box {
+      width: 90%;
+      max-width: 400px;
+      margin: 60px auto;
       background: white;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 10px rgba(0,0,0,.1);
     }
 
-    h1 {
+    h2 {
       text-align: center;
-      margin-bottom: 25px;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
     }
 
     input {
       width: 100%;
-      box-sizing: border-box;
       padding: 12px;
-      margin-top: 7px;
+      margin: 8px 0;
+      box-sizing: border-box;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 5px;
     }
 
     button {
       width: 100%;
-      padding: 13px;
+      padding: 12px;
+      margin-top: 10px;
       border: none;
-      border-radius: 7px;
+      border-radius: 5px;
+      background: #111;
+      color: white;
       font-size: 16px;
-      cursor: pointer;
-      margin-top: 15px;
     }
 
-    .login {
-      background: #0a8f3c;
-      color: white;
-    }
-
-    .register {
-      background: #222;
-      color: white;
-    }
-
-    .home {
-      background: #ddd;
-      color: #222;
-    }
-
-    .forgot {
-      background: #eee;
-      color: #222;
-    }
-
-    #message {
-      margin-top: 15px;
+    .link {
       text-align: center;
-      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .link a {
+      color: #1976d2;
+      text-decoration: none;
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="box">
 
-  <div class="box">
+  <h2>SBKART Login</h2>
 
-    <h1>Login</h1>
+  <input
+    type="email"
+    id="email"
+    placeholder="Email"
+  >
 
-    <label>Email</label>
+  <input
+    type="password"
+    id="password"
+    placeholder="Password"
+  >
 
-    <input
-      type="email"
-      id="email"
-      placeholder="Enter your email"
-    >
+  <button id="loginBtn">
+    Login
+  </button>
 
+  <button id="forgotBtn">
+    Forgot Password
+  </button>
 
-    <label>Password</label>
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Enter your password"
-    >
-
-
-    <button
-      class="login"
-      onclick="loginUser()"
-    >
-      Login
-    </button>
-
-
-    <button
-      class="forgot"
-      onclick="forgotPassword()"
-    >
-      Forgot Password?
-    </button>
-
-
-    <button
-      class="register"
-      onclick="window.location.href='register.html'"
-    >
-      Create Account
-    </button>
-
-
-    <button
-      class="home"
-      onclick="window.location.href='index.html'"
-    >
-      Back to Home
-    </button>
-
-
-    <div id="message"></div>
-
+  <div class="link">
+    Account nahi hai?
+    <a href="register.html">Create Account</a>
   </div>
 
 </div>
@@ -152,171 +94,162 @@
 
 <script type="module">
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+  import {
+    initializeAuth,
+    browserLocalPersistence,
+    setPersistence,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
   const firebaseConfig = {
-  apiKey: "AIzaSyDUtjrUO2tcMYtgPFjzfLwMk_c37DytwRA",
-  authDomain: "sbkart-fa406.firebaseapp.com",
-  projectId: "sbkart-fa406",
-  storageBucket: "sbkart-fa406.firebasestorage.app",
-  messagingSenderId: "890129821807",
-  appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
-};
+    apiKey: "AIzaSyDUjtrUO2tcMYtgPFjzfLwMk_c37DytwRA",
+    authDomain: "sbkart-fa406.firebaseapp.com",
+    projectId: "sbkart-fa406",
+    storageBucket: "sbkart-fa406.firebasestorage.app",
+    messagingSenderId: "890129821807",
+    appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+  };
 
 
-const app =
-  initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+
+  const auth = initializeAuth(app, {
+    persistence: browserLocalPersistence
+  });
 
 
-const auth =
-  getAuth(app);
+  const loginBtn =
+    document.getElementById("loginBtn");
+
+  const forgotBtn =
+    document.getElementById("forgotBtn");
 
 
-window.loginUser = async function() {
+  loginBtn.addEventListener("click", async () => {
 
-  const email =
-    document.getElementById("email").value.trim();
+    const email =
+      document.getElementById("email").value.trim();
 
-  const password =
-    document.getElementById("password").value;
-
-  const message =
-    document.getElementById("message");
+    const password =
+      document.getElementById("password").value;
 
 
-  message.textContent = "";
+    if (!email || !password) {
 
+      alert("Email aur password enter karein.");
 
-  if (!email) {
-
-    message.textContent =
-      "Please enter your email.";
-
-    return;
-  }
-
-
-  if (!password) {
-
-    message.textContent =
-      "Please enter your password.";
-
-    return;
-  }
-
-
-  try {
-
-    message.textContent =
-      "Login ho raha hai...";
-
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-
-    alert(
-      "Login successful!"
-    );
-
-
-    window.location.href =
-      "index.html";
-
-
-  } catch (error) {
-
-    console.error(error);
-
-
-    if (
-      error.code ===
-      "auth/invalid-credential"
-    ) {
-
-      message.textContent =
-        "Email ya password galat hai.";
+      return;
 
     }
 
-    else if (
-      error.code ===
-      "auth/invalid-email"
-    ) {
 
-      message.textContent =
-        "Email address galat hai.";
+    try {
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Logging in...";
+
+
+      await setPersistence(
+        auth,
+        browserLocalPersistence
+      );
+
+
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+
+      /*
+        Firebase login successful.
+        Local persistence ke saath session save ho chuka hai.
+      */
+
+      window.location.href = "index.html";
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      if (error.code === "auth/invalid-credential") {
+
+        alert("Email ya password galat hai.");
+
+      } else if (error.code === "auth/user-not-found") {
+
+        alert("Account nahi mila. Pehle Create Account karein.");
+
+      } else if (error.code === "auth/wrong-password") {
+
+        alert("Password galat hai.");
+
+      } else if (error.code === "auth/invalid-email") {
+
+        alert("Email address sahi nahi hai.");
+
+      } else {
+
+        alert("Login failed: " + error.message);
+
+      }
+
+    } finally {
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Login";
 
     }
 
-    else {
+  });
 
-      message.textContent =
-        "Login error: " +
-        error.message;
+
+  forgotBtn.addEventListener("click", async () => {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+
+    if (!email) {
+
+      alert("Pehle email enter karein.");
+
+      return;
 
     }
 
-  }
 
-};
+    try {
 
+      await sendPasswordResetEmail(
+        auth,
+        email
+      );
 
-window.forgotPassword = async function() {
+      alert(
+        "Password reset email bhej diya gaya hai."
+      );
 
-  const email =
-    document.getElementById("email").value.trim();
+    } catch (error) {
 
-  const message =
-    document.getElementById("message");
+      alert(
+        "Password reset failed: " +
+        error.message
+      );
 
+    }
 
-  if (!email) {
-
-    message.textContent =
-      "Pehle email enter karein.";
-
-    return;
-  }
-
-
-  try {
-
-    await sendPasswordResetEmail(
-      auth,
-      email
-    );
-
-
-    message.textContent =
-      "Password reset email bhej diya gaya hai.";
-
-  } catch (error) {
-
-    console.error(error);
-
-    message.textContent =
-      "Password reset error: " +
-      error.message;
-
-  }
-
-};
+  });
 
 </script>
 
 </body>
-  </html>
+</html>
