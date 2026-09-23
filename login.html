@@ -1,140 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Login - SBKART</title>
 
-
   <style>
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f4f6;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: 40px auto;
     }
 
     .box {
-      max-width: 400px;
-      margin: 50px auto;
       background: white;
       padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
-    h2 {
+    h1 {
       text-align: center;
-      color: #111827;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
       box-sizing: border-box;
-      padding: 13px;
-      margin: 8px 0;
-      border: 1px solid #d1d5db;
-      border-radius: 7px;
-      font-size: 15px;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
     }
 
     button {
       width: 100%;
       padding: 13px;
-      margin-top: 10px;
       border: none;
       border-radius: 7px;
       font-size: 16px;
       cursor: pointer;
-    }
-
-    .login-btn {
-      background: #16a34a;
-      color: white;
-    }
-
-    .create-btn {
-      background: #2563eb;
-      color: white;
-    }
-
-    .reset-btn {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .link {
-      text-align: center;
       margin-top: 15px;
     }
 
-    .link a {
-      color: #2563eb;
-      text-decoration: none;
+    .login {
+      background: #0a8f3c;
+      color: white;
     }
 
-    #message {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    #resetBox {
-      display: none;
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid #ddd;
+    .register {
+      background: #222;
+      color: white;
     }
 
     .home {
+      background: #ddd;
+      color: #222;
+    }
+
+    .forgot {
+      background: #eee;
+      color: #222;
+    }
+
+    #message {
+      margin-top: 15px;
       text-align: center;
-      margin-top: 20px;
+      font-weight: bold;
     }
-
-    .home a {
-      color: #111827;
-      text-decoration: none;
-    }
-
   </style>
-
 </head>
-
 
 <body>
 
+<div class="container">
 
   <div class="box">
 
+    <h1>Login</h1>
 
-    <h2>🛍️ SBKART Login</h2>
-
+    <label>Email</label>
 
     <input
       type="email"
       id="email"
-      placeholder="Email Address"
+      placeholder="Enter your email"
     >
 
+
+    <label>Password</label>
 
     <input
       type="password"
       id="password"
-      placeholder="Password"
+      placeholder="Enter your password"
     >
 
 
     <button
-      type="button"
-      class="login-btn"
-      id="loginBtn"
+      class="login"
       onclick="loginUser()"
     >
       Login
@@ -142,298 +120,210 @@
 
 
     <button
-      type="button"
-      class="create-btn"
-      onclick="window.location.href='register.html'"
+      class="forgot"
+      onclick="forgotPassword()"
     >
-      Create New Account
+      Forgot Password?
     </button>
 
 
-    <div class="link">
-
-      <a
-        href="#"
-        onclick="showReset(); return false;"
-      >
-        Forgot Password?
-      </a>
-
-    </div>
+    <button
+      class="register"
+      onclick="window.location.href='register.html'"
+    >
+      Create Account
+    </button>
 
 
-    <div id="resetBox">
-
-      <input
-        type="email"
-        id="resetEmail"
-        placeholder="Enter your email"
-      >
-
-
-      <button
-        type="button"
-        class="reset-btn"
-        onclick="resetPassword()"
-      >
-        Send Reset Link
-      </button>
-
-    </div>
+    <button
+      class="home"
+      onclick="window.location.href='index.html'"
+    >
+      Back to Home
+    </button>
 
 
     <div id="message"></div>
 
-
-    <div class="home">
-
-      <a href="index.html">
-        ← Continue Shopping
-      </a>
-
-    </div>
-
-
   </div>
 
+</div>
 
-  <script type="module">
 
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+<script type="module">
 
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-    const firebaseConfig = {
 
-      apiKey:
-        "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
+const firebaseConfig = {
 
-      authDomain:
-        "sbkart-fa406.firebaseapp.com",
+  apiKey: "AIzaSyDUjtrUO2tcMYtgPFjzfLwMk_c37DytwRA",
 
-      projectId:
-        "sbkart-fa406",
+  authDomain: "sbkart-fa406.firebaseapp.com",
 
-      storageBucket:
-        "sbkart-fa406.firebasestorage.app",
+  projectId: "sbkart-fa406",
 
-      messagingSenderId:
-        "890129821807",
+  storageBucket: "sbkart-fa406.firebasestorage.app",
 
-      appId:
-        "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+  messagingSenderId: "890129821807",
 
-    };
+  appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
 
+};
 
-    const app =
-      initializeApp(firebaseConfig);
 
+const app =
+  initializeApp(firebaseConfig);
 
-    const auth =
-      getAuth(app);
 
+const auth =
+  getAuth(app);
 
-    window.loginUser =
-      async function() {
 
+window.loginUser = async function() {
 
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
+  const email =
+    document.getElementById("email").value.trim();
 
+  const password =
+    document.getElementById("password").value;
 
-      const password =
-        document
-          .getElementById("password")
-          .value;
+  const message =
+    document.getElementById("message");
 
 
-      const message =
-        document.getElementById("message");
+  message.textContent = "";
 
 
-      const button =
-        document.getElementById("loginBtn");
+  if (!email) {
 
+    message.textContent =
+      "Please enter your email.";
 
-      message.style.color =
-        "#dc2626";
+    return;
+  }
 
 
-      if (!email || !password) {
+  if (!password) {
 
-        message.textContent =
-          "Please enter email and password.";
+    message.textContent =
+      "Please enter your password.";
 
-        return;
-      }
+    return;
+  }
 
 
-      button.disabled = true;
+  try {
 
-      button.textContent =
-        "Logging in...";
+    message.textContent =
+      "Login ho raha hai...";
 
 
-      try {
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
 
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+    alert(
+      "Login successful!"
+    );
 
 
-        message.style.color =
-          "#16a34a";
+    window.location.href =
+      "index.html";
 
 
-        message.textContent =
-          "Login successful!";
+  } catch (error) {
 
+    console.error(error);
 
-        /*
-          Login ke baad customer
-          seedha cart par jayega.
-        */
 
-        setTimeout(
-          function() {
+    if (
+      error.code ===
+      "auth/invalid-credential"
+    ) {
 
-            window.location.href =
-              "cart.html";
+      message.textContent =
+        "Email ya password galat hai.";
 
-          },
-          700
-        );
+    }
 
+    else if (
+      error.code ===
+      "auth/invalid-email"
+    ) {
 
-      } catch (error) {
+      message.textContent =
+        "Email address galat hai.";
 
+    }
 
-        button.disabled = false;
+    else {
 
-        button.textContent =
-          "Login";
+      message.textContent =
+        "Login error: " +
+        error.message;
 
+    }
 
-        if (
-          error.code ===
-          "auth/invalid-credential"
-        ) {
+  }
 
-          message.textContent =
-            "Email or password is incorrect.";
+};
 
-        }
 
-        else if (
-          error.code ===
-          "auth/invalid-email"
-        ) {
+window.forgotPassword = async function() {
 
-          message.textContent =
-            "Please enter a valid email address.";
+  const email =
+    document.getElementById("email").value.trim();
 
-        }
+  const message =
+    document.getElementById("message");
 
-        else {
 
-          message.textContent =
-            error.message;
+  if (!email) {
 
-        }
+    message.textContent =
+      "Pehle email enter karein.";
 
-      }
+    return;
+  }
 
-    };
 
+  try {
 
-    window.showReset =
-      function() {
+    await sendPasswordResetEmail(
+      auth,
+      email
+    );
 
-        document
-          .getElementById("resetBox")
-          .style.display = "block";
 
-        document
-          .getElementById("message")
-          .textContent = "";
+    message.textContent =
+      "Password reset email bhej diya gaya hai.";
 
-      };
+  } catch (error) {
 
+    console.error(error);
 
-    window.resetPassword =
-      async function() {
+    message.textContent =
+      "Password reset error: " +
+      error.message;
 
+  }
 
-      const email =
-        document
-          .getElementById("resetEmail")
-          .value
-          .trim();
+};
 
-
-      const message =
-        document.getElementById("message");
-
-
-      if (!email) {
-
-        message.style.color =
-          "#dc2626";
-
-        message.textContent =
-          "Please enter your email.";
-
-        return;
-      }
-
-
-      try {
-
-
-        await sendPasswordResetEmail(
-          auth,
-          email
-        );
-
-
-        message.style.color =
-          "#16a34a";
-
-        message.textContent =
-          "Password reset link has been sent to your email.";
-
-
-      } catch (error) {
-
-
-        message.style.color =
-          "#dc2626";
-
-        message.textContent =
-          error.message;
-
-      }
-
-    };
-
-  </script>
-
+</script>
 
 </body>
-
-</html>
+  </html>
