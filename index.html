@@ -213,7 +213,7 @@ footer {
           </div>
           <h3>${product.name}</h3>
           <div class="price">₹${product.price || 0}</div>
-          <button>Buy Now</button>
+          <button onclick="addToCart('${doc.id}', '${product.name}', ${product.price || 0})">Buy Now</button>
         </div>
       `;
     });
