@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>SBKART - Cart</title>
 
   <style>
@@ -22,7 +23,7 @@
 
     .cart-container {
       max-width: 700px;
-      margin: 25px auto;
+      margin: 20px auto;
       padding: 15px;
     }
 
@@ -56,29 +57,73 @@
       font-weight: bold;
     }
 
+    .qty {
+      margin-top: 10px;
+    }
+
+    .qty button {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 5px;
+      background: #e5e7eb;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .qty span {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
     .remove {
+      margin-top: 10px;
       background: #dc2626;
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 7px 10px;
       border-radius: 6px;
       cursor: pointer;
     }
 
-    .total {
+    .summary {
       background: white;
       padding: 18px;
       border-radius: 10px;
-      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    .summary h2 {
+      margin-top: 0;
+    }
+
+    .checkout {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 7px;
+      background: #16a34a;
+      color: white;
+      font-size: 17px;
       font-weight: bold;
-      text-align: right;
+      cursor: pointer;
     }
 
     .back {
-      display: inline-block;
+      display: block;
       margin-top: 15px;
-      text-decoration: none;
+      text-align: center;
       color: #2563eb;
+      text-decoration: none;
+    }
+
+    .empty {
+      background: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -93,65 +138,169 @@
 
   <div id="cartItems"></div>
 
-  <div class="total">
-    Total: ₹<span id="cartTotal">0</span>
+  <div class="summary">
+    <h2>Order Summary</h2>
+
+    <p>
+      Total Items:
+      <b><span id="totalItems">0</span></b>
+    </p>
+
+    <p>
+      Total Amount:
+      <b>₹<span id="cartTotal">0</span></b>
+    </p>
+
+    <button class="checkout" onclick="goToCheckout()">
+      Proceed to Checkout
+    </button>
   </div>
 
-  <a class="back" href="index.html">← Continue Shopping</a>
+  <a class="back" href="index.html">
+    ← Continue Shopping
+  </a>
 
 </div>
 
 <script>
-  const cart = JSON.parse(localStorage.getItem("sbkartCart")) || [];
 
-  const cartItems = document.getElementById("cartItems");
-  const cartTotal = document.getElementById("cartTotal");
+  let cart = JSON.parse(localStorage.getItem("sbkartCart")) || [];
 
-  let total = 0;
+  function renderCart() {
 
-  cart.forEach((item, index) => {
+    const cartItems = document.getElementById("cartItems");
 
-    total += Number(item.price);
+    const cartTotal = document.getElementById("cartTotal");
 
-    cartItems.innerHTML += `
-      <div class="cart-item">
+    const totalItems = document.getElementById("totalItems");
 
-        <img src="${item.image}" alt="${item.name}">
+    cartItems.innerHTML = "";
 
-        <div class="cart-info">
-          <h3>${item.name}</h3>
-          <div class="price">₹${item.price}</div>
-          <div style="margin-top:10px;">
-  <button onclick="changeQty(${index}, -1)">−</button>
-  <span style="margin:0 10px;">${item.quantity || 1}</span>
-  <button onclick="changeQty(${index}, 1)">+</button>
-</div>
+    let total = 0;
+
+    let itemsCount = 0;
+
+    if (cart.length === 0) {
+
+      cartItems.innerHTML = `
+        <div class="empty">
+          <h2>Your Cart is Empty</h2>
+          <p>Add some products to your cart.</p>
+        </div>
+      `;
+
+      document.querySelector(".summary").style.display = "none";
+
+      return;
+    }
+
+    document.querySelector(".summary").style.display = "block";
+
+    cart.forEach((item, index) => {
+
+      const quantity = item.quantity || 1;
+
+      const itemTotal = Number(item.price) * quantity;
+
+      total += itemTotal;
+
+      itemsCount += quantity;
+
+      cartItems.innerHTML += `
+
+        <div class="cart-item">
+
+          <img src="${item.image}" alt="${item.name}">
+
+          <div class="cart-info">
+
+            <h3>${item.name}</h3>
+
+            <div class="price">
+              ₹${item.price} each
+            </div>
+
+            <div class="qty">
+
+              <button onclick="changeQty(${index}, -1)">
+                −
+              </button>
+
+              <span>
+                ${quantity}
+              </span>
+
+              <button onclick="changeQty(${index}, 1)">
+                +
+              </button>
+
+            </div>
+
+            <p>
+              Item Total:
+              <b>₹${itemTotal}</b>
+            </p>
+
+            <button class="remove" onclick="removeItem(${index})">
+              Remove
+            </button>
+
+          </div>
+
         </div>
 
-        <button class="remove" onclick="removeItem(${index})">
-          Remove
-        </button>
+      `;
+    });
 
-      </div>
-    `;
-  });
+    cartTotal.textContent = total;
 
-  cartTotal.textContent = total;
-function changeQty(index, change) {
-  cart[index].quantity = (cart[index].quantity || 1) + change;
-
-  if (cart[index].quantity < 1) {
-    cart[index].quantity = 1;
+    totalItems.textContent = itemsCount;
   }
 
-  localStorage.setItem("sbkartCart", JSON.stringify(cart));
-  location.reload();
-}
+
+  function changeQty(index, change) {
+
+    cart[index].quantity = (cart[index].quantity || 1) + change;
+
+    if (cart[index].quantity < 1) {
+      cart[index].quantity = 1;
+    }
+
+    localStorage.setItem(
+      "sbkartCart",
+      JSON.stringify(cart)
+    );
+
+    renderCart();
+  }
+
+
   function removeItem(index) {
+
     cart.splice(index, 1);
-    localStorage.setItem("sbkartCart", JSON.stringify(cart));
-    location.reload();
+
+    localStorage.setItem(
+      "sbkartCart",
+      JSON.stringify(cart)
+    );
+
+    renderCart();
   }
+
+
+  function goToCheckout() {
+
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    window.location.href = "checkout.html";
+  }
+
+
+  renderCart();
+
 </script>
 
 </body>
