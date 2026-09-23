@@ -323,11 +323,17 @@
 
   onAuthStateChanged(auth, (user) => {
 
-    currentUser = user;
+  currentUser = user;
 
-    updateUserInterface();
+  if (user) {
+    alert("Firebase Login मिला: " + (user.email || user.uid));
+  } else {
+    alert("Firebase Login नहीं मिला");
+  }
 
-  });
+  updateUserInterface();
+
+});
 
 
   /* =========================
