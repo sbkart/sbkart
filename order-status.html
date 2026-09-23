@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>SBKART - Order Status</title>
+
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+
+    .container {
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+
+    .order-id {
+      background: #eff6ff;
+      padding: 12px;
+      border-radius: 7px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+
+    .status {
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+
+    .pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+
+    .failed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+
+    .details p {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+    }
+
+
+    .button {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 7px;
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+
+    .home {
+      background: #16a34a;
+    }
+
+
+    .refresh {
+      background: #6b7280;
+      cursor: pointer;
+    }
+
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+
+    .support {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+  <h1>📦 SBKART Order Status</h1>
+
+</header>
+
+
+<div class="container">
+
+
+  <div id="loading" class="box">
+
+    <h2>Loading Order...</h2>
+
+    <p>Please wait.</p>
+
+  </div>
+
+
+  <div
+    id="orderBox"
+    class="box"
+    style="display:none;"
+  >
+
+    <h2>Order Details</h2>
+
+
+    <div class="order-id">
+
+      Order ID:
+      <span id="orderId"></span>
+
+    </div>
+
+
+    <div
+      id="statusBox"
+      class="status pending"
+    >
+
+      ⏳ Payment Pending
+
+    </div>
+
+
+    <div class="details">
+
+      <p>
+        <span>Customer</span>
+        <b id="customerName"></b>
+      </p>
+
+
+      <p>
+        <span>Mobile</span>
+        <b id="mobile"></b>
+      </p>
+
+
+      <p>
+        <span>Product Total</span>
+        <b>₹<span id="productTotal"></span></b>
+      </p>
+
+
+      <p>
+        <span>Shipping Fee</span>
+        <b>₹<span id="shippingFee"></span></b>
+      </p>
+
+
+      <p>
+        <span>Delivery Fee</span>
+        <b>₹<span id="deliveryFee"></span></b>
+      </p>
+
+
+      <p>
+        <span>Final Total</span>
+        <b>₹<span id="finalTotal"></span></b>
+      </p>
+
+    </div>
+
+
+    <div class="support">
+
+      <h3>Payment Pending?</h3>
+
+      <p>
+        Agar payment verify hone me time lag raha hai,
+        to Customer Care se contact karein.
+      </p>
+
+      <p>
+        Payment screenshot upload feature
+        next step me add kiya jayega.
+      </p>
+
+    </div>
+
+
+    <button
+      class="button refresh"
+      onclick="loadOrder()"
+    >
+      🔄 Refresh Status
+    </button>
+
+
+    <a
+      href="index.html"
+      class="button home"
+    >
+      🏠 Continue Shopping
+    </a>
+
+  </div>
+
+
+  <div
+    id="errorBox"
+    class="error"
+    style="display:none;"
+  >
+
+    Order nahi mila.
+
+  </div>
+
+
+</div>
+
+
+<script type="module">
+
+
+  import {
+    initializeApp
+  }
+  from
+  "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  }
+  from
+  "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+
+    apiKey:
+      "AIzaSyDUtjrUOtcMYtgPFjzfLwMk_c37DytwRA",
+
+    authDomain:
+      "sbkart-fa406.firebaseapp.com",
+
+    projectId:
+      "sbkart-fa406",
+
+    storageBucket:
+      "sbkart-fa406.firebasestorage.app",
+
+    messagingSenderId:
+      "890129821807",
+
+    appId:
+      "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+
+  };
+
+
+  const app =
+    initializeApp(firebaseConfig);
+
+
+  const db =
+    getFirestore(app);
+
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const orderId =
+    params.get("order");
+
+
+  async function loadOrder() {
+
+
+    if (!orderId) {
+
+      showError();
+
+      return;
+
+    }
+
+
+    document.getElementById("loading")
+      .style.display = "block";
+
+
+    document.getElementById("orderBox")
+      .style.display = "none";
+
+
+    try {
+
+
+      const snapshot = await getDoc(
+        doc(db, "orders", orderId)
+      );
+
+
+      /*
+        Note:
+        Firestore document ID and our custom
+        SBK orderId are different.
+
+        Therefore we search the orders collection
+        using the custom orderId.
+      */
+
+
+      if (!snapshot.exists()) {
+
+        await findOrderByCustomId();
+
+        return;
+
+      }
+
+
+      showOrder(snapshot.data());
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      await findOrderByCustomId();
+
+    }
+
+  }
+
+
+  async function findOrderByCustomId() {
+
+
+    try {
+
+
+      const {
+        collection,
+        getDocs
+      } = await import(
+        "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js"
+      );
+
+
+      const snapshot =
+        await getDocs(
+          collection(db, "orders")
+        );
+
+
+      let found = null;
+
+
+      snapshot.forEach((item) => {
+
+        const data =
+          item.data();
+
+
+        if (
+          data.orderId === orderId
+        ) {
+
+          found = data;
+
+        }
+
+      });
+
+
+      if (!found) {
+
+        showError();
+
+        return;
+
+      }
+
+
+      showOrder(found);
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showError();
+
+    }
+
+  }
+
+
+  function showOrder(data) {
+
+
+    document.getElementById("loading")
+      .style.display = "none";
+
+
+    document.getElementById("orderBox")
+      .style.display = "block";
+
+
+    document.getElementById("orderId")
+      .textContent =
+      data.orderId || orderId;
+
+
+    document.getElementById("customerName")
+      .textContent =
+      data.customerName || "";
+
+
+    document.getElementById("mobile")
+      .textContent =
+      data.mobile || "";
+
+
+    document.getElementById("productTotal")
+      .textContent =
+      Number(data.productTotal || 0)
+        .toFixed(2);
+
+
+    document.getElementById("shippingFee")
+      .textContent =
+      Number(data.shippingFee || 0)
+        .toFixed(2);
+
+
+    document.getElementById("deliveryFee")
+      .textContent =
+      Number(data.deliveryFee || 0)
+        .toFixed(2);
+
+
+    document.getElementById("finalTotal")
+      .textContent =
+      Number(data.finalTotal || 0)
+        .toFixed(2);
+
+
+    const status =
+      data.orderStatus || "Pending";
+
+
+    const statusBox =
+      document.getElementById("statusBox");
+
+
+    if (
+      status.toLowerCase() ===
+      "successful"
+    ) {
+
+
+      statusBox.className =
+        "status success";
+
+
+      statusBox.textContent =
+        "✅ Order Successful";
+
+
+    } else if (
+      status.toLowerCase() ===
+      "failed"
+    ) {
+
+
+      statusBox.className =
+        "status failed";
+
+
+      statusBox.textContent =
+        "❌ Payment Failed";
+
+
+    } else {
+
+
+      statusBox.className =
+        "status pending";
+
+
+      statusBox.textContent =
+        "⏳ Payment Pending";
+
+    }
+
+  }
+
+
+  function showError() {
+
+
+    document.getElementById("loading")
+      .style.display = "none";
+
+
+    document.getElementById("orderBox")
+      .style.display = "none";
+
+
+    document.getElementById("errorBox")
+      .style.display = "block";
+
+  }
+
+
+  loadOrder();
+
+
+  // Make refresh function available
+  window.loadOrder = loadOrder;
+
+
+</script>
+
+
+</body>
+
+</html>
