@@ -212,15 +212,20 @@ footer {
       const product = doc.data();
 
       productGrid.innerHTML += `
-        <div class="product">
-          <div class="product-img">
-            <img src="${product.image}" alt="${product.name}" style="width:100%; height:130px; object-fit:cover; border-radius:8px;">
-          </div>
-          <h3>${product.name}</h3>
-          <div class="price">₹${product.price || 0}</div>
-          <button onclick="addToCart('${doc.id}', '${product.name}', ${product.price || 0}, '${product.image}')">Buy Now</button>
-        </div>
-      `;
+  <div class="product">
+    <div class="product-img">
+      <img src="${product.image}" alt="${product.name}" style="width:100%; height:130px; object-fit:cover; border-radius:8px;">
+    </div>
+
+    <h3>${product.name}</h3>
+
+    <div class="price">₹${product.price || 0}</div>
+
+    <button onclick="addToCart('${doc.id}', '${product.name}', ${product.price || 0}, '${product.image}')">
+      Buy Now
+    </button>
+  </div>
+`;
     });
   }
 let cart = [];
@@ -238,16 +243,6 @@ function addToCart(id, name, price, image) {
   document.getElementById("cartCount").textContent = cart.length;
 
   window.location.href = "cart.html";
-}
-  cart.push({
-    id: id,
-    name: name,
-    price: price
-  });
-
-  document.getElementById("cartCount").textContent = cart.length;
-
-  alert(name + " Cart mein add ho gaya!");
 }
   window.addToCart = addToCart;
   document.getElementById("cart").onclick = function() {
