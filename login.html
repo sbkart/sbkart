@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Login - SBKART</title>
 
+
   <style>
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -93,14 +102,20 @@
       color: #111827;
       text-decoration: none;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
   <div class="box">
 
+
     <h2>🛍️ SBKART Login</h2>
+
 
     <input
       type="email"
@@ -108,32 +123,44 @@
       placeholder="Email Address"
     >
 
+
     <input
       type="password"
       id="password"
       placeholder="Password"
     >
 
+
     <button
       type="button"
       class="login-btn"
       id="loginBtn"
-      onclick="loginUser()">
+      onclick="loginUser()"
+    >
       Login
     </button>
+
 
     <button
       type="button"
       class="create-btn"
-      onclick="window.location.href='register.html'">
+      onclick="window.location.href='register.html'"
+    >
       Create New Account
     </button>
 
+
     <div class="link">
-      <a href="#" onclick="showReset(); return false;">
+
+      <a
+        href="#"
+        onclick="showReset(); return false;"
+      >
         Forgot Password?
       </a>
+
     </div>
+
 
     <div id="resetBox">
 
@@ -143,20 +170,29 @@
         placeholder="Enter your email"
       >
 
+
       <button
         type="button"
         class="reset-btn"
-        onclick="resetPassword()">
+        onclick="resetPassword()"
+      >
         Send Reset Link
       </button>
 
     </div>
 
+
     <div id="message"></div>
 
+
     <div class="home">
-      <a href="index.html">← Continue Shopping</a>
+
+      <a href="index.html">
+        ← Continue Shopping
+      </a>
+
     </div>
+
 
   </div>
 
@@ -167,6 +203,7 @@
       initializeApp
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
+
     import {
       getAuth,
       signInWithEmailAndPassword,
@@ -175,35 +212,63 @@
 
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
-      authDomain: "sbkart-fa406.firebaseapp.com",
-      projectId: "sbkart-fa406",
-      storageBucket: "sbkart-fa406.firebasestorage.app",
-      messagingSenderId: "890129821807",
-      appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+
+      apiKey:
+        "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
+
+      authDomain:
+        "sbkart-fa406.firebaseapp.com",
+
+      projectId:
+        "sbkart-fa406",
+
+      storageBucket:
+        "sbkart-fa406.firebasestorage.app",
+
+      messagingSenderId:
+        "890129821807",
+
+      appId:
+        "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+
     };
 
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    const app =
+      initializeApp(firebaseConfig);
 
 
-    window.loginUser = async function() {
+    const auth =
+      getAuth(app);
+
+
+    window.loginUser =
+      async function() {
+
 
       const email =
-        document.getElementById("email").value.trim();
+        document
+          .getElementById("email")
+          .value
+          .trim();
+
 
       const password =
-        document.getElementById("password").value;
+        document
+          .getElementById("password")
+          .value;
+
 
       const message =
         document.getElementById("message");
+
 
       const button =
         document.getElementById("loginBtn");
 
 
-      message.style.color = "#dc2626";
+      message.style.color =
+        "#dc2626";
 
 
       if (!email || !password) {
@@ -216,10 +281,13 @@
 
 
       button.disabled = true;
-      button.textContent = "Logging in...";
+
+      button.textContent =
+        "Logging in...";
 
 
       try {
+
 
         await signInWithEmailAndPassword(
           auth,
@@ -228,38 +296,64 @@
         );
 
 
-        message.style.color = "#16a34a";
+        message.style.color =
+          "#16a34a";
+
 
         message.textContent =
           "Login successful!";
 
 
-        setTimeout(() => {
+        /*
+          Login ke baad customer
+          seedha cart par jayega.
+        */
 
-          window.location.href = "my-orders.html";
+        setTimeout(
+          function() {
 
-        }, 800);
+            window.location.href =
+              "cart.html";
+
+          },
+          700
+        );
 
 
       } catch (error) {
 
+
         button.disabled = false;
-        button.textContent = "Login";
+
+        button.textContent =
+          "Login";
 
 
         if (
-          error.code === "auth/invalid-credential" ||
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/user-not-found"
+          error.code ===
+          "auth/invalid-credential"
         ) {
 
           message.textContent =
             "Email or password is incorrect.";
 
-        } else {
+        }
+
+        else if (
+          error.code ===
+          "auth/invalid-email"
+        ) {
+
+          message.textContent =
+            "Please enter a valid email address.";
+
+        }
+
+        else {
 
           message.textContent =
             error.message;
+
         }
 
       }
@@ -267,20 +361,30 @@
     };
 
 
-    window.showReset = function() {
+    window.showReset =
+      function() {
 
-      document.getElementById("resetBox").style.display =
-        "block";
+        document
+          .getElementById("resetBox")
+          .style.display = "block";
 
-      document.getElementById("message").textContent = "";
+        document
+          .getElementById("message")
+          .textContent = "";
 
-    };
+      };
 
 
-    window.resetPassword = async function() {
+    window.resetPassword =
+      async function() {
+
 
       const email =
-        document.getElementById("resetEmail").value.trim();
+        document
+          .getElementById("resetEmail")
+          .value
+          .trim();
+
 
       const message =
         document.getElementById("message");
@@ -288,7 +392,8 @@
 
       if (!email) {
 
-        message.style.color = "#dc2626";
+        message.style.color =
+          "#dc2626";
 
         message.textContent =
           "Please enter your email.";
@@ -299,20 +404,25 @@
 
       try {
 
+
         await sendPasswordResetEmail(
           auth,
           email
         );
 
 
-        message.style.color = "#16a34a";
+        message.style.color =
+          "#16a34a";
 
         message.textContent =
           "Password reset link has been sent to your email.";
 
+
       } catch (error) {
 
-        message.style.color = "#dc2626";
+
+        message.style.color =
+          "#dc2626";
 
         message.textContent =
           error.message;
@@ -323,5 +433,7 @@
 
   </script>
 
+
 </body>
+
 </html>
