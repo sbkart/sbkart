@@ -1,379 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Create Account - SBKART</title>
 
-
   <style>
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f4f6;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
     }
 
+    .container {
+      max-width: 450px;
+      margin: 40px auto;
+    }
 
     .box {
-      max-width: 400px;
-      margin: 50px auto;
       background: white;
       padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
-
-    h2 {
+    h1 {
       text-align: center;
-      color: #111827;
+      margin-bottom: 25px;
     }
 
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
 
     input {
       width: 100%;
       box-sizing: border-box;
-      padding: 13px;
-      margin: 8px 0;
-      border: 1px solid #d1d5db;
-      border-radius: 7px;
-      font-size: 15px;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
     }
-
 
     button {
       width: 100%;
       padding: 13px;
-      margin-top: 12px;
-      background: #16a34a;
-      color: white;
       border: none;
       border-radius: 7px;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 15px;
     }
 
-
-    button:disabled {
-      background: #9ca3af;
+    .register {
+      background: #0a8f3c;
+      color: white;
     }
-
 
     .login {
-      text-align: center;
-      margin-top: 18px;
+      background: #222;
+      color: white;
     }
 
-
-    .login a {
-      color: #2563eb;
-      text-decoration: none;
+    .home {
+      background: #ddd;
+      color: #222;
     }
-
 
     #message {
-      text-align: center;
       margin-top: 15px;
-      font-size: 14px;
+      text-align: center;
+      font-weight: bold;
     }
-
   </style>
-
 </head>
-
 
 <body>
 
+<div class="container">
 
   <div class="box">
 
+    <h1>Create Account</h1>
 
-    <h2>🛍️ Create SBKART Account</h2>
-
+    <label>Full Name</label>
 
     <input
       type="text"
       id="name"
-      placeholder="Full Name"
+      placeholder="Enter your name"
     >
 
+
+    <label>Email</label>
 
     <input
       type="email"
       id="email"
-      placeholder="Email Address"
+      placeholder="Enter your email"
     >
 
+
+    <label>Password</label>
 
     <input
       type="password"
       id="password"
-      placeholder="Password"
+      placeholder="Minimum 6 characters"
     >
 
+
+    <label>Confirm Password</label>
 
     <input
       type="password"
       id="confirmPassword"
-      placeholder="Confirm Password"
+      placeholder="Enter password again"
     >
 
 
     <button
-      type="button"
-      id="createBtn"
+      class="register"
       onclick="createAccount()"
     >
       Create Account
     </button>
 
 
+    <button
+      class="login"
+      onclick="window.location.href='login.html'"
+    >
+      Already have an account? Login
+    </button>
+
+
+    <button
+      class="home"
+      onclick="window.location.href='index.html'"
+    >
+      Back to Home
+    </button>
+
+
     <div id="message"></div>
-
-
-    <div class="login">
-
-      Already have an account?
-
-      <a href="login.html">
-        Login
-      </a>
-
-    </div>
-
 
   </div>
 
+</div>
 
-  <script type="module">
 
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+<script type="module">
 
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-    const firebaseConfig = {
 
-      apiKey:
-        "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
+const firebaseConfig = {
 
-      authDomain:
-        "sbkart-fa406.firebaseapp.com",
+  apiKey: "AIzaSyDUjtrUO2tcMYtgPFjzfLwMk_c37DytwRA",
 
-      projectId:
-        "sbkart-fa406",
+  authDomain: "sbkart-fa406.firebaseapp.com",
 
-      storageBucket:
-        "sbkart-fa406.firebasestorage.app",
+  projectId: "sbkart-fa406",
 
-      messagingSenderId:
-        "890129821807",
+  storageBucket: "sbkart-fa406.firebasestorage.app",
 
-      appId:
-        "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+  messagingSenderId: "890129821807",
 
-    };
+  appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
 
+};
 
-    const app =
-      initializeApp(firebaseConfig);
 
+const app =
+  initializeApp(firebaseConfig);
 
-    const auth =
-      getAuth(app);
 
+const auth =
+  getAuth(app);
 
-    window.createAccount =
-      async function() {
 
+window.createAccount = async function() {
 
-      const name =
-        document
-          .getElementById("name")
-          .value
-          .trim();
+  const name =
+    document.getElementById("name").value.trim();
 
+  const email =
+    document.getElementById("email").value.trim();
 
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
+  const password =
+    document.getElementById("password").value;
 
+  const confirmPassword =
+    document.getElementById("confirmPassword").value;
 
-      const password =
-        document
-          .getElementById("password")
-          .value;
+  const message =
+    document.getElementById("message");
 
 
-      const confirmPassword =
-        document
-          .getElementById("confirmPassword")
-          .value;
+  message.textContent = "";
 
 
-      const message =
-        document.getElementById("message");
+  if (!name) {
 
+    message.textContent =
+      "Please enter your name.";
 
-      const button =
-        document.getElementById("createBtn");
+    return;
+  }
 
 
-      message.style.color =
-        "#dc2626";
+  if (!email) {
 
+    message.textContent =
+      "Please enter your email.";
 
-      if (
-        !name ||
-        !email ||
-        !password ||
-        !confirmPassword
-      ) {
+    return;
+  }
 
-        message.textContent =
-          "Please fill all fields.";
 
-        return;
-      }
+  if (password.length < 6) {
 
+    message.textContent =
+      "Password minimum 6 characters ka hona chahiye.";
 
-      if (password.length < 6) {
+    return;
+  }
 
-        message.textContent =
-          "Password must be at least 6 characters.";
 
-        return;
-      }
+  if (password !== confirmPassword) {
 
+    message.textContent =
+      "Password aur Confirm Password same nahi hain.";
 
-      if (password !== confirmPassword) {
+    return;
+  }
 
-        message.textContent =
-          "Passwords do not match.";
 
-        return;
-      }
+  try {
 
+    message.textContent =
+      "Account create ho raha hai...";
 
-      button.disabled = true;
 
-      button.textContent =
-        "Creating Account...";
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
 
-      try {
+    const user =
+      userCredential.user;
 
 
-        const userCredential =
-          await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
+    await updateProfile(user, {
+      displayName: name
+    });
 
 
-        await updateProfile(
-          userCredential.user,
-          {
-            displayName: name
-          }
-        );
+    alert(
+      "Account successfully create ho gaya!"
+    );
 
 
-        message.style.color =
-          "#16a34a";
+    window.location.href =
+      "login.html";
 
 
-        message.textContent =
-          "Account created successfully!";
+  } catch (error) {
 
+    console.error(error);
 
-        /*
-          Account create hone ke baad
-          login page par bhej rahe hain.
-        */
 
-        setTimeout(
-          function() {
+    if (
+      error.code ===
+      "auth/email-already-in-use"
+    ) {
 
-            window.location.href =
-              "login.html";
+      message.textContent =
+        "Ye email already registered hai.";
 
-          },
-          1000
-        );
+    }
 
+    else if (
+      error.code ===
+      "auth/invalid-email"
+    ) {
 
-      } catch (error) {
+      message.textContent =
+        "Email address galat hai.";
 
+    }
 
-        button.disabled = false;
+    else if (
+      error.code ===
+      "auth/weak-password"
+    ) {
 
-        button.textContent =
-          "Create Account";
+      message.textContent =
+        "Password bahut weak hai.";
 
+    }
 
-        if (
-          error.code ===
-          "auth/email-already-in-use"
-        ) {
+    else {
 
-          message.textContent =
-            "This email is already registered. Please login.";
+      message.textContent =
+        "Error: " + error.message;
 
-        }
+    }
 
-        else if (
-          error.code ===
-          "auth/invalid-email"
-        ) {
+  }
 
-          message.textContent =
-            "Please enter a valid email address.";
+};
 
-        }
-
-        else if (
-          error.code ===
-          "auth/weak-password"
-        ) {
-
-          message.textContent =
-            "Password must be at least 6 characters.";
-
-        }
-
-        else {
-
-          message.textContent =
-            error.message;
-
-        }
-
-      }
-
-    };
-
-  </script>
-
+</script>
 
 </body>
-
-  </html>
+</html>
