@@ -1,1 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SBKART - Cart</title>
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .cart-container {
+      max-width: 700px;
+      margin: 25px auto;
+      padding: 15px;
+    }
+
+    .cart-item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .cart-info {
+      flex: 1;
+    }
+
+    .cart-info h3 {
+      margin: 0 0 8px;
+    }
+
+    .price {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .remove {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .total {
+      background: white;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #2563eb;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 SBKART Cart</h1>
+</header>
+
+<div class="cart-container">
+
+  <div id="cartItems"></div>
+
+  <div class="total">
+    Total: ₹<span id="cartTotal">0</span>
+  </div>
+
+  <a class="back" href="index.html">← Continue Shopping</a>
+
+</div>
+
+<script>
+  const cart = JSON.parse(localStorage.getItem("sbkartCart")) || [];
+
+  const cartItems = document.getElementById("cartItems");
+  const cartTotal = document.getElementById("cartTotal");
+
+  let total = 0;
+
+  cart.forEach((item, index) => {
+
+    total += Number(item.price);
+
+    cartItems.innerHTML += `
+      <div class="cart-item">
+
+        <img src="${item.image}" alt="${item.name}">
+
+        <div class="cart-info">
+          <h3>${item.name}</h3>
+          <div class="price">₹${item.price}</div>
+        </div>
+
+        <button class="remove" onclick="removeItem(${index})">
+          Remove
+        </button>
+
+      </div>
+    `;
+  });
+
+  cartTotal.textContent = total;
+
+  function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem("sbkartCart", JSON.stringify(cart));
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
