@@ -3,413 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>My Orders - SBKART</title>
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f3f4f6;
+      background: #f5f5f5;
       margin: 0;
       padding: 20px;
     }
 
-    .box {
-      max-width: 650px;
+    .container {
+      max-width: 700px;
       margin: auto;
     }
 
     h1 {
       text-align: center;
-      color: #111827;
-    }
-
-    .top {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    button,
-    a {
-      flex: 1;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      text-align: center;
-      text-decoration: none;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .shop {
-      background: #2563eb;
-      color: white;
-    }
-
-    .logout {
-      background: #dc2626;
-      color: white;
     }
 
     .order {
       background: white;
-      margin: 15px 0;
       padding: 18px;
-      border-radius: 12px;
+      margin-bottom: 18px;
+      border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .order h3 {
-      margin-top: 0;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
       gap: 15px;
-      margin: 8px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
     }
 
-    .status {
-      display: inline-block;
-      padding: 7px 10px;
-      border-radius: 7px;
+    .label {
       font-weight: bold;
     }
 
     .pending {
-      background: #fef3c7;
-      color: #92400e;
+      color: #d97706;
+      font-weight: bold;
     }
 
     .success {
-      background: #dcfce7;
-      color: #166534;
+      color: #15803d;
+      font-weight: bold;
     }
 
     .failed {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .loading,
-    .empty {
-      text-align: center;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
+      color: #dc2626;
+      font-weight: bold;
     }
 
     .item {
-      border-bottom: 1px solid #eee;
       padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 7px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .home {
+      background: #0a8f3c;
+      color: white;
+    }
+
+    .logout {
+      background: #222;
+      color: white;
+    }
+
+    .message {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-  <h1>📦 My Orders</h1>
+  <h1>My Orders</h1>
 
-  <div class="top">
-    <a class="shop" href="index.html">
-      Continue Shopping
-    </a>
-
-    <button class="logout" onclick="logout()">
-      Logout
-    </button>
-  </div>
-
-  <div id="loading" class="loading">
+  <div id="loading" class="message">
     Loading orders...
   </div>
 
   <div id="orders"></div>
+
+  <div id="empty" class="message" style="display:none;">
+    अभी कोई order नहीं है।
+  </div>
+
+  <button class="home" onclick="window.location.href='index.html'">
+    Continue Shopping
+  </button>
+
+  <button class="logout" onclick="logout()">
+    Logout
+  </button>
 
 </div>
 
 
 <script type="module">
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  import {
-    getFirestore,
-    collection,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-
-  const firebaseConfig = {
-
-    apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
-
-    authDomain:
-      "sbkart-fa406.firebaseapp.com",
-
-    projectId:
-      "sbkart-fa406",
-
-    storageBucket:
-      "sbkart-fa406.firebasestorage.app",
-
-    messagingSenderId:
-      "890129821807",
-
-    appId:
-      "1:890129821807:web:3e1478e1f8b914ff29dd9a"
-
-  };
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
-  const app =
-    initializeApp(firebaseConfig);
+const firebaseConfig = {
 
-  const auth =
-    getAuth(app);
+  apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
 
-  const db =
-    getFirestore(app);
+  authDomain: "sbkart-fa406.firebaseapp.com",
 
+  projectId: "sbkart-fa406",
 
-  const loading =
-    document.getElementById("loading");
+  storageBucket: "sbkart-fa406.firebasestorage.app",
 
-  const ordersBox =
-    document.getElementById("orders");
+  messagingSenderId: "890129821807",
 
+  appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
 
-  /*
-    CHECK LOGIN
-  */
-
-  onAuthStateChanged(auth, async (user) => {
-
-    if (!user) {
-
-      window.location.href =
-        "login.html";
-
-      return;
-
-    }
-
-    await loadOrders(user);
-
-  });
+};
 
 
-  /*
-    LOAD ORDERS
-  */
+const app = initializeApp(firebaseConfig);
 
-  async function loadOrders(user) {
+const db = getFirestore(app);
 
-    try {
-
-      const snapshot =
-        await getDocs(
-          collection(db, "orders")
-        );
+const auth = getAuth(app);
 
 
-      let myOrders = [];
+let currentUser = null;
 
 
-      snapshot.forEach((doc) => {
+onAuthStateChanged(auth, async (user) => {
 
-        const data = doc.data();
+  if (!user) {
 
-        /*
-          अभी पुराने orders में customerEmail नहीं है,
-          इसलिए फिलहाल email से matching possible नहीं है.
-        */
+    alert("Order History dekhne ke liye Login karein.");
 
-        if (
-          data.customerEmail &&
-          data.customerEmail === user.email
-        ) {
+    window.location.href = "login.html";
 
-          myOrders.push(data);
+    return;
+  }
 
-        }
+  currentUser = user;
 
-      });
+  await loadOrders();
+
+});
 
 
-      loading.style.display =
-        "none";
+async function loadOrders() {
+
+  try {
+
+    const snapshot =
+      await getDocs(collection(db, "orders"));
 
 
-      if (myOrders.length === 0) {
+    const orders = [];
 
-        ordersBox.innerHTML = `
-          <div class="empty">
-            <h3>No orders found</h3>
-            <p>
-              Aapka order yahan dikhega.
-            </p>
-          </div>
-        `;
 
-        return;
+    snapshot.forEach((docSnap) => {
+
+      const data = docSnap.data();
+
+
+      if (
+        data.customerUid === currentUser.uid
+      ) {
+
+        orders.push(data);
 
       }
 
-
-      /*
-        Latest order first
-      */
-
-      myOrders.reverse();
+    });
 
 
-      myOrders.forEach((order) => {
+    orders.sort((a, b) => {
 
-        let itemsHTML = "";
+      const aTime =
+        a.createdAt?.seconds || 0;
 
+      const bTime =
+        b.createdAt?.seconds || 0;
 
-        if (Array.isArray(order.items)) {
+      return bTime - aTime;
 
-          order.items.forEach((item) => {
-
-            const quantity =
-              Number(item.quantity) || 1;
-
-            const price =
-              Number(item.price) || 0;
-
-            itemsHTML += `
-              <div class="item">
-                ${item.name || "Product"}
-                × ${quantity}
-                — ₹${(price * quantity).toFixed(2)}
-              </div>
-            `;
-
-          });
-
-        }
+    });
 
 
-        let statusClass =
-          "pending";
-
-        if (
-          order.orderStatus ===
-          "Successful"
-        ) {
-
-          statusClass =
-            "success";
-
-        }
-
-        if (
-          order.orderStatus ===
-          "Failed"
-        ) {
-
-          statusClass =
-            "failed";
-
-        }
+    document.getElementById("loading").style.display =
+      "none";
 
 
-        let dateText =
-          "Date unavailable";
+    if (orders.length === 0) {
+
+      document.getElementById("empty").style.display =
+        "block";
+
+      return;
+    }
 
 
-        if (order.createdAt) {
-
-          if (
-            typeof order.createdAt.toDate ===
-            "function"
-          ) {
-
-            dateText =
-              order.createdAt
-                .toDate()
-                .toLocaleString("en-IN");
-
-          }
-
-        }
+    const container =
+      document.getElementById("orders");
 
 
-        ordersBox.innerHTML += `
+    container.innerHTML = "";
 
-          <div class="order">
 
-            <h3>
-              Order ${order.orderId || ""}
-            </h3>
+    orders.forEach((order) => {
 
-            <div class="row">
-              <span>Date</span>
-              <span>${dateText}</span>
-            </div>
+      const div =
+        document.createElement("div");
 
-            <h4>Products</h4>
+      div.className = "order";
 
-            ${itemsHTML}
 
-            <div class="row">
-              <b>Product Total</b>
-              <b>
-                ₹${Number(order.productTotal || 0).toFixed(2)}
-              </b>
-            </div>
+      let itemsHTML = "";
 
-            <div class="row">
-              <span>Shipping</span>
-              <span>
-                ₹${Number(order.shippingFee || 0).toFixed(2)}
-              </span>
-            </div>
 
-            <div class="row">
-              <span>Delivery</span>
-              <span>
-                ₹${Number(order.deliveryFee || 0).toFixed(2)}
-              </span>
-            </div>
+      (order.items || []).forEach((item) => {
 
-            <div class="row">
-              <b>Final Total</b>
-              <b>
-                ₹${Number(order.finalTotal || 0).toFixed(2)}
-              </b>
-            </div>
+        const quantity =
+          Number(item.quantity || 1);
 
-            <div class="row">
-              <span>UTR</span>
-              <span>${order.utr || "-"}</span>
-            </div>
+        const price =
+          Number(item.price || 0);
 
-            <div class="row">
-              <span>Payment</span>
-              <span>
-                ${order.paymentStatus || "Pending"}
-              </span>
-            </div>
+        const total =
+          price * quantity;
 
-            <div style="margin-top:12px;">
-              <span class="status ${statusClass}">
-                ${order.orderStatus || "Pending"}
-              </span>
-            </div>
+
+        itemsHTML += `
+
+          <div class="item">
+
+            <b>${escapeHtml(item.name)}</b>
+
+            <br>
+
+            Quantity: ${quantity}
+
+            ${
+              item.size
+              ? `<br>Size: ${escapeHtml(item.size)}`
+              : ""
+            }
+
+            <br>
+
+            ₹${total.toFixed(2)}
 
           </div>
 
@@ -418,39 +293,123 @@
       });
 
 
-    } catch (error) {
+      const paymentStatus =
+        order.paymentStatus || "Pending";
 
-      console.error(error);
+      const orderStatus =
+        order.orderStatus || "Pending";
 
-      loading.style.display =
-        "none";
 
-      ordersBox.innerHTML = `
-        <div class="empty">
-          <h3>Orders load nahi ho sake</h3>
-          <p>
-            ${error.message}
-          </p>
+      div.innerHTML = `
+
+        <h2>
+          ${escapeHtml(order.orderId || "Order")}
+        </h2>
+
+        <div class="row">
+          <span class="label">Payment Status</span>
+          <span class="${getStatusClass(paymentStatus)}">
+            ${escapeHtml(paymentStatus)}
+          </span>
         </div>
+
+        <div class="row">
+          <span class="label">Order Status</span>
+          <span class="${getStatusClass(orderStatus)}">
+            ${escapeHtml(orderStatus)}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">UTR</span>
+          <span>
+            ${escapeHtml(order.utr || "-")}
+          </span>
+        </div>
+
+        <div class="row">
+          <span class="label">Total</span>
+          <span>
+            ₹${Number(order.finalTotal || 0).toFixed(2)}
+          </span>
+        </div>
+
+        <h3>Products</h3>
+
+        ${itemsHTML}
+
       `;
 
-    }
+
+      container.appendChild(div);
+
+    });
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("loading").textContent =
+      "Orders load nahi ho sake.";
 
   }
 
+}
 
-  /*
-    LOGOUT
-  */
 
-  window.logout = async function() {
+function getStatusClass(status) {
+
+  if (
+    status === "Successful" ||
+    status === "Approved"
+  ) {
+
+    return "success";
+
+  }
+
+  if (
+    status === "Failed" ||
+    status === "Rejected"
+  ) {
+
+    return "failed";
+
+  }
+
+  return "pending";
+
+}
+
+
+window.logout = async function() {
+
+  try {
 
     await signOut(auth);
 
-    window.location.href =
-      "login.html";
+    window.location.href = "login.html";
 
-  };
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+
+};
+
+
+function escapeHtml(value) {
+
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
 
 </script>
 
