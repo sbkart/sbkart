@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
   <meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <title>SBKART - Cart</title>
+  <title>My Cart - SBKART</title>
+
 
   <style>
 
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
       background: #f3f4f6;
       color: #111827;
     }
+
 
     header {
       background: #111827;
@@ -24,11 +30,19 @@
       text-align: center;
     }
 
-    .cart-container {
-      max-width: 700px;
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+
+    .container {
+      max-width: 900px;
       margin: 20px auto;
       padding: 15px;
     }
+
 
     .cart-item {
       background: white;
@@ -38,33 +52,43 @@
       display: flex;
       gap: 15px;
       align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
+
     .cart-item img {
-      width: 100px;
-      height: 100px;
+      width: 90px;
+      height: 90px;
       object-fit: cover;
       border-radius: 8px;
     }
 
-    .cart-info {
+
+    .item-info {
       flex: 1;
     }
 
-    .cart-info h3 {
+
+    .item-info h3 {
       margin: 0 0 8px;
     }
 
+
     .price {
-      color: #16a34a;
       font-weight: bold;
+      color: #16a34a;
+      margin-bottom: 8px;
     }
 
-    .qty {
-      margin-top: 10px;
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .qty button {
+
+    .quantity button {
       width: 32px;
       height: 32px;
       border: none;
@@ -74,81 +98,92 @@
       cursor: pointer;
     }
 
-    .qty span {
-      margin: 0 10px;
+
+    .quantity span {
+      min-width: 25px;
+      text-align: center;
       font-weight: bold;
     }
 
-    .remove {
-      margin-top: 10px;
+
+    .remove-btn {
       background: #dc2626;
       color: white;
       border: none;
-      padding: 7px 10px;
+      padding: 8px 12px;
       border-radius: 6px;
       cursor: pointer;
+      margin-top: 8px;
     }
+
 
     .summary {
       background: white;
-      padding: 18px;
+      padding: 20px;
       border-radius: 10px;
       margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .summary h2 {
-      margin-top: 0;
-    }
 
-    .summary p {
+    .summary-row {
       display: flex;
       justify-content: space-between;
       margin: 12px 0;
     }
 
-    .final-total {
-      font-size: 21px;
-      color: #16a34a;
+
+    .final-row {
+      font-size: 20px;
+      font-weight: bold;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
     }
 
-    .checkout {
-      display: block;
+
+    .checkout-btn {
       width: 100%;
-      padding: 13px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 7px;
       background: #16a34a;
       color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
       font-size: 17px;
-      font-weight: bold;
+      margin-top: 15px;
       cursor: pointer;
     }
 
-    .back {
+
+    .continue {
       display: block;
-      margin-top: 15px;
       text-align: center;
+      margin-top: 15px;
       color: #2563eb;
       text-decoration: none;
     }
 
+
     .empty {
       background: white;
-      padding: 25px;
+      padding: 40px 20px;
       text-align: center;
       border-radius: 10px;
     }
 
-    @media (max-width: 500px) {
+
+    @media (max-width: 600px) {
 
       .cart-item {
         align-items: flex-start;
       }
 
       .cart-item img {
-        width: 80px;
-        height: 80px;
+        width: 75px;
+        height: 75px;
+      }
+
+      .item-info h3 {
+        font-size: 16px;
       }
 
     }
@@ -157,302 +192,362 @@
 
 </head>
 
+
 <body>
 
-<header>
-  <h1>🛒 SBKART Cart</h1>
-</header>
+
+  <header>
+
+    <h1>🛒 SBKART Cart</h1>
+
+  </header>
 
 
-<div class="cart-container">
-
-  <div id="cartItems"></div>
+  <div class="container">
 
 
-  <div class="summary">
+    <div id="cartItems"></div>
 
-    <h2>Order Summary</h2>
 
-    <p>
-      <span>Total Items:</span>
-      <b><span id="totalItems">0</span></b>
-    </p>
+    <div
+      class="summary"
+      id="summary"
+      style="display:none;"
+    >
 
-    <p>
-      <span>Product Total:</span>
-      <b>₹<span id="cartTotal">0.00</span></b>
-    </p>
+      <h2>Order Summary</h2>
 
-    <p>
-      <span>Shipping Fee (5%):</span>
-      <b>₹<span id="shippingFee">0.00</span></b>
-    </p>
 
-    <p>
-      <span>Delivery Fee:</span>
-      <b>₹<span id="deliveryFee">50.00</span></b>
-    </p>
+      <div class="summary-row">
 
-    <hr>
+        <span>Product Total</span>
 
-    <p class="final-total">
-      <span>Final Total:</span>
-      <b>₹<span id="finalTotal">0.00</span></b>
-    </p>
+        <span>
+          ₹<span id="productTotal">0</span>
+        </span>
 
-    <button class="checkout" onclick="goToCheckout()">
-      Proceed to Checkout
-    </button>
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Shipping Fee (5%)</span>
+
+        <span>
+          ₹<span id="shippingFee">0</span>
+        </span>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>Delivery Fee</span>
+
+        <span>
+          ₹<span id="deliveryFee">50</span>
+        </span>
+
+      </div>
+
+
+      <div class="summary-row final-row">
+
+        <span>Final Total</span>
+
+        <span>
+          ₹<span id="finalTotal">0</span>
+        </span>
+
+      </div>
+
+
+      <button
+        class="checkout-btn"
+        onclick="goToCheckout()"
+      >
+        Proceed to Checkout
+      </button>
+
+
+    </div>
+
+
+    <a
+      href="index.html"
+      class="continue"
+    >
+      ← Continue Shopping
+    </a>
+
 
   </div>
 
 
-  <a class="back" href="index.html">
-    ← Continue Shopping
-  </a>
+  <script>
 
-</div>
+    let cart =
+      JSON.parse(
+        localStorage.getItem("sbkartCart")
+      ) || [];
 
-
-<script>
-
-  let cart =
-    JSON.parse(localStorage.getItem("sbkartCart")) || [];
-
-
-  function renderCart() {
 
     const cartItems =
       document.getElementById("cartItems");
 
-    const cartTotal =
-      document.getElementById("cartTotal");
+    const summary =
+      document.getElementById("summary");
 
-    const totalItems =
-      document.getElementById("totalItems");
+    const productTotalElement =
+      document.getElementById("productTotal");
 
-    const shippingFee =
+    const shippingElement =
       document.getElementById("shippingFee");
 
-    const deliveryFee =
+    const deliveryElement =
       document.getElementById("deliveryFee");
 
-    const finalTotal =
+    const finalElement =
       document.getElementById("finalTotal");
 
 
-    cartItems.innerHTML = "";
+    function renderCart() {
+
+      cartItems.innerHTML = "";
 
 
-    let productTotal = 0;
+      if (cart.length === 0) {
 
-    let itemsCount = 0;
-
-
-    if (cart.length === 0) {
-
-      cartItems.innerHTML = `
-        <div class="empty">
-
-          <h2>Your Cart is Empty</h2>
-
-          <p>Add some products to your cart.</p>
-
-        </div>
-      `;
-
-      document.querySelector(".summary").style.display = "none";
-
-      return;
-    }
+        summary.style.display = "none";
 
 
-    document.querySelector(".summary").style.display = "block";
+        cartItems.innerHTML = `
 
+          <div class="empty">
 
-    cart.forEach((item, index) => {
-
-      const quantity =
-        item.quantity || 1;
-
-
-      const itemTotal =
-        Number(item.price) * quantity;
-
-
-      productTotal += itemTotal;
-
-      itemsCount += quantity;
-
-
-      cartItems.innerHTML += `
-
-        <div class="cart-item">
-
-          <img
-            src="${item.image}"
-            alt="${item.name}"
-          >
-
-
-          <div class="cart-info">
-
-            <h3>${item.name}</h3>
-
-
-            <div class="price">
-              ₹${Number(item.price).toFixed(2)} each
-            </div>
-
-
-            <div class="qty">
-
-              <button
-                onclick="changeQty(${index}, -1)"
-              >
-                −
-              </button>
-
-
-              <span>
-                ${quantity}
-              </span>
-
-
-              <button
-                onclick="changeQty(${index}, 1)"
-              >
-                +
-              </button>
-
-            </div>
-
+            <h2>🛒 Your Cart is Empty</h2>
 
             <p>
-              Item Total:
-              <b>₹${itemTotal.toFixed(2)}</b>
+              Add some products to your cart.
             </p>
 
-
-            <button
-              class="remove"
-              onclick="removeItem(${index})"
+            <a
+              href="index.html"
+              style="
+                color:#2563eb;
+                text-decoration:none;
+              "
             >
-              Remove
-            </button>
+              Go Shopping
+            </a>
 
           </div>
 
-        </div>
+        `;
 
-      `;
-
-    });
-
-
-    // Shipping fee = 5% of Product Total
-
-    const shipping =
-      productTotal * 0.05;
+        return;
+      }
 
 
-    // Fixed delivery fee
-
-    const delivery = 50;
+      summary.style.display = "block";
 
 
-    // Final amount
-
-    const final =
-      productTotal + shipping + delivery;
+      let productTotal = 0;
 
 
-    totalItems.textContent =
-      itemsCount;
+      cart.forEach((item, index) => {
+
+        const quantity =
+          Number(item.quantity || 1);
+
+        const price =
+          Number(item.price || 0);
+
+        const itemTotal =
+          price * quantity;
 
 
-    cartTotal.textContent =
-      productTotal.toFixed(2);
+        productTotal += itemTotal;
 
 
-    shippingFee.textContent =
-      shipping.toFixed(2);
+        cartItems.innerHTML += `
+
+          <div class="cart-item">
 
 
-    deliveryFee.textContent =
-      delivery.toFixed(2);
+            <img
+              src="${item.image || ''}"
+              alt="${item.name || 'Product'}"
+            >
 
 
-    finalTotal.textContent =
-      final.toFixed(2);
+            <div class="item-info">
 
-  }
-
-
-
-  function changeQty(index, change) {
-
-    cart[index].quantity =
-      (cart[index].quantity || 1) + change;
+              <h3>
+                ${item.name || 'Product'}
+              </h3>
 
 
-    if (cart[index].quantity < 1) {
+              <div class="price">
 
-      cart[index].quantity = 1;
+                ₹${price}
+
+              </div>
+
+
+              <div class="quantity">
+
+                <button
+                  onclick="decreaseQuantity(${index})"
+                >
+                  −
+                </button>
+
+
+                <span>
+                  ${quantity}
+                </span>
+
+
+                <button
+                  onclick="increaseQuantity(${index})"
+                >
+                  +
+                </button>
+
+              </div>
+
+
+              <p>
+                Item Total:
+                <b>₹${itemTotal.toFixed(2)}</b>
+              </p>
+
+
+              <button
+                class="remove-btn"
+                onclick="removeItem(${index})"
+              >
+                Remove
+              </button>
+
+            </div>
+
+
+          </div>
+
+        `;
+
+      });
+
+
+      const shipping =
+        productTotal * 0.05;
+
+
+      const delivery = 50;
+
+
+      const final =
+        productTotal +
+        shipping +
+        delivery;
+
+
+      productTotalElement.textContent =
+        productTotal.toFixed(2);
+
+
+      shippingElement.textContent =
+        shipping.toFixed(2);
+
+
+      deliveryElement.textContent =
+        delivery.toFixed(2);
+
+
+      finalElement.textContent =
+        final.toFixed(2);
 
     }
 
 
-    localStorage.setItem(
-      "sbkartCart",
-      JSON.stringify(cart)
-    );
+    function increaseQuantity(index) {
+
+      cart[index].quantity =
+        Number(cart[index].quantity || 1) + 1;
 
 
-    renderCart();
-
-  }
-
-
-
-  function removeItem(index) {
-
-    cart.splice(index, 1);
-
-
-    localStorage.setItem(
-      "sbkartCart",
-      JSON.stringify(cart)
-    );
-
-
-    renderCart();
-
-  }
-
-
-
-  function goToCheckout() {
-
-    if (cart.length === 0) {
-
-      alert("Your cart is empty.");
-
-      return;
+      saveCart();
 
     }
 
 
-    window.location.href =
-      "checkout.html";
+    function decreaseQuantity(index) {
 
-  }
+      const quantity =
+        Number(cart[index].quantity || 1);
 
 
+      if (quantity > 1) {
 
-  renderCart();
+        cart[index].quantity =
+          quantity - 1;
 
-</script>
+      } else {
+
+        cart.splice(index, 1);
+
+      }
+
+
+      saveCart();
+
+    }
+
+
+    function removeItem(index) {
+
+      cart.splice(index, 1);
+
+      saveCart();
+
+    }
+
+
+    function saveCart() {
+
+      localStorage.setItem(
+        "sbkartCart",
+        JSON.stringify(cart)
+      );
+
+      renderCart();
+
+    }
+
+
+    function goToCheckout() {
+
+      if (cart.length === 0) {
+
+        alert("Your cart is empty.");
+
+        return;
+      }
+
+
+      window.location.href =
+        "checkout.html";
+
+    }
+
+
+    renderCart();
+
+  </script>
+
 
 </body>
+
 </html>
