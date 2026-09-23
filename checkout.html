@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SBKART - Checkout</title>
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .payment-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #qrCode {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    #qrCode img,
+    #qrCode canvas {
+      max-width: 220px;
+      max-height: 220px;
+    }
+
+    .upi-id {
+      background: white;
+      padding: 10px;
+      border-radius: 7px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .utr {
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .order-total {
+      font-size: 21px;
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .place-order {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 7px;
+      background: #16a34a;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .place-order:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .loading {
+      color: #6b7280;
+      text-align: center;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 SBKART Checkout</h1>
+</header>
+
+
+<div class="container">
+
+  <div class="box">
+
+    <h2>Customer Details</h2>
+
+    <form onsubmit="placeOrder(event)">
+
+      <label>Full Name</label>
+
+      <input
+        type="text"
+        id="name"
+        placeholder="Enter your full name"
+        required
+      >
+
+
+      <label>Mobile Number</label>
+
+      <input
+        type="tel"
+        id="mobile"
+        placeholder="10 digit mobile number"
+        pattern="[0-9]{10}"
+        maxlength="10"
+        inputmode="numeric"
+        required
+      >
+
+
+      <label>Delivery Address</label>
+
+      <textarea
+        id="address"
+        placeholder="House No, Street, City, State, PIN"
+        required
+      ></textarea>
+
+
+      <div class="box">
+
+        <h2>Order Summary</h2>
+
+        <p>
+          Product Total:
+          ₹<span id="productTotal">0.00</span>
+        </p>
+
+        <p>
+          Shipping Fee (5%):
+          ₹<span id="shippingFee">0.00</span>
+        </p>
+
+        <p>
+          Delivery Fee:
+          ₹<span id="deliveryFee">50.00</span>
+        </p>
+
+        <hr>
+
+        <p class="order-total">
+          Final Total:
+          ₹<span id="finalTotal">0.00</span>
+        </p>
+
+      </div>
+
+
+      <div class="payment-box">
+
+        <h2>💳 UPI Payment</h2>
+
+        <p>
+          नीचे दिए गए QR code को किसी भी UPI app से scan करके
+          payment करें।
+        </p>
+
+
+        <div id="qrCode">
+          <div class="loading">
+            Loading QR...
+          </div>
+        </div>
+
+
+        <p>
+          <b>UPI ID</b>
+        </p>
+
+        <div class="upi-id">
+          <span id="upiId">Loading...</span>
+        </div>
+
+
+        <p class="note">
+          ऊपर दिखाए गए Final Total का exact payment करें।
+          Payment successful होने के बाद UTR number नीचे डालें।
+        </p>
+
+
+        <label>12-Digit UTR Number</label>
+
+        <input
+          type="text"
+          id="utr"
+          class="utr"
+          placeholder="Enter 12 digit UTR"
+          inputmode="numeric"
+          pattern="[0-9]{12}"
+          maxlength="12"
+          required
+        >
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="place-order"
+        id="placeOrderBtn"
+      >
+        Submit Payment & Place Order
+      </button>
+
+    </form>
+
+  </div>
+
+
+  <a href="cart.html" class="back">
+    ← Back to Cart
+  </a>
+
+</div>
+
+
+<!-- QR Code Library -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
+<script type="module">
+
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    serverTimestamp
+  }
+  from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+
+    apiKey:
+      "AIzaSyDUtjrUOtcMYtgPFjzfLwMk_c37DytwRA",
+
+    authDomain:
+      "sbkart-fa406.firebaseapp.com",
+
+    projectId:
+      "sbkart-fa406",
+
+    storageBucket:
+      "sbkart-fa406.firebasestorage.app",
+
+    messagingSenderId:
+      "890129821807",
+
+    appId:
+      "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+
+  };
+
+
+  const app =
+    initializeApp(firebaseConfig);
+
+  const db =
+    getFirestore(app);
+
+
+  let cart =
+    JSON.parse(localStorage.getItem("sbkartCart")) || [];
+
+
+  let currentUpiId = "";
+
+
+  function calculateTotal() {
+
+    let productTotal = 0;
+
+
+    cart.forEach((item) => {
+
+      const quantity =
+        item.quantity || 1;
+
+      productTotal +=
+        Number(item
