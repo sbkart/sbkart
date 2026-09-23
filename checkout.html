@@ -24,11 +24,9 @@
 
     h1 {
       text-align: center;
-      color: #111827;
     }
 
     h2 {
-      color: #111827;
       margin-top: 25px;
     }
 
@@ -45,47 +43,44 @@
 
     textarea {
       min-height: 90px;
-      resize: vertical;
     }
 
     .summary {
       background: #f9fafb;
       padding: 15px;
       border-radius: 10px;
-      margin-top: 10px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
+      gap: 15px;
       margin: 10px 0;
     }
 
     .total {
-      font-size: 20px;
-      font-weight: bold;
       border-top: 1px solid #ddd;
       padding-top: 12px;
+      font-size: 20px;
+      font-weight: bold;
     }
 
     .payment {
       background: #eff6ff;
       padding: 15px;
       border-radius: 10px;
-      margin-top: 15px;
       text-align: center;
-    }
-
-    #qrcode {
-      margin: 15px auto;
-      width: 200px;
-      min-height: 20px;
     }
 
     .upi {
       font-size: 18px;
       font-weight: bold;
       word-break: break-all;
+    }
+
+    #qrcode {
+      margin: 15px auto;
+      width: 200px;
     }
 
     button {
@@ -103,21 +98,33 @@
 
     button:disabled {
       background: #9ca3af;
-      cursor: not-allowed;
+    }
+
+    .login-box {
+      background: #fff7ed;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .login-btn {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 8px;
     }
 
     .error {
-      color: #dc2626;
+      display: none;
       background: #fee2e2;
+      color: #b91c1c;
       padding: 10px;
       border-radius: 8px;
-      display: none;
       margin-top: 10px;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 30px;
     }
 
     .back {
@@ -125,7 +132,11 @@
       text-align: center;
       margin-top: 15px;
       color: #2563eb;
-      text-decoration: none;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
     }
   </style>
 
@@ -138,10 +149,30 @@
 
   <h1>Checkout</h1>
 
-  <div id="emptyCart" class="empty" style="display:none;">
-    <h3>Your cart is empty</h3>
-    <a class="back" href="index.html">Continue Shopping</a>
+  <!-- LOGIN STATUS -->
+  <div id="loginBox" class="login-box" style="display:none;">
+
+    <b>Checkout karne ke liye login zaroori hai.</b>
+
+    <br>
+
+    <a class="login-btn" href="login.html">
+      Login / Create Account
+    </a>
+
   </div>
+
+
+  <div id="emptyCart" class="empty" style="display:none;">
+
+    <h3>Your cart is empty</h3>
+
+    <a class="back" href="index.html">
+      Continue Shopping
+    </a>
+
+  </div>
+
 
   <div id="checkoutContent">
 
@@ -185,8 +216,9 @@
     <input
       type="tel"
       id="mobile"
-      placeholder="Mobile Number"
+      placeholder="10-digit Mobile Number"
       maxlength="10"
+      inputmode="numeric"
     >
 
     <textarea
@@ -208,13 +240,13 @@
       <div id="qrcode"></div>
 
       <p>
-        After payment, enter your <b>12-digit UTR number</b>.
+        Payment ke baad <b>12-digit UTR</b> enter karo.
       </p>
 
       <input
         type="text"
         id="utr"
-        placeholder="Enter 12-digit UTR"
+        placeholder="12-digit UTR"
         maxlength="12"
         inputmode="numeric"
       >
@@ -224,9 +256,11 @@
 
     <div id="errorBox" class="error"></div>
 
+
     <button id="submitBtn" onclick="submitOrder()">
       Submit Order
     </button>
+
 
     <a class="back" href="cart.html">
       ← Back to Cart
@@ -239,8 +273,14 @@
 
 <script type="module">
 
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
   import {
     getFirestore,
@@ -250,44 +290,63 @@
     query,
     where,
     serverTimestamp
-  }
-    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDUtjrUOtcMYtgPFjzfLwMk_c37DytwRA",
-    authDomain: "sbkart-fa406.firebaseapp.com",
-    projectId: "sbkart-fa406",
-    storageBucket: "sbkart-fa406.firebasestorage.app",
-    messagingSenderId: "890129821807",
-    appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+
+    apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
+
+    authDomain:
+      "sbkart-fa406.firebaseapp.com",
+
+    projectId:
+      "sbkart-fa406",
+
+    storageBucket:
+      "sbkart-fa406.firebasestorage.app",
+
+    messagingSenderId:
+      "890129821807",
+
+    appId:
+      "1:890129821807:web:3e1478e1f8b914ff29dd9a"
   };
 
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const app =
+    initializeApp(firebaseConfig);
 
+  const auth =
+    getAuth(app);
+
+  const db =
+    getFirestore(app);
+
+
+  let currentUser = null;
 
   let cart = [];
-  let currentUpiId = "mrsunnykumar@ptaxis";
+
+  let currentUpiId =
+    "mrsunnykumar@ptaxis";
 
 
   /*
-    ============================
+    =========================
     LOAD CART
-    ============================
+    =========================
   */
 
   function loadCart() {
 
     try {
 
-      const savedCart = localStorage.getItem("sbkartCart");
+      const saved =
+        localStorage.getItem("sbkartCart");
 
-      console.log("Saved Cart:", savedCart);
-
-      if (savedCart) {
-        cart = JSON.parse(savedCart);
+      if (saved) {
+        cart = JSON.parse(saved);
       }
 
       if (!Array.isArray(cart)) {
@@ -296,7 +355,8 @@
 
     } catch (error) {
 
-      console.error("Cart error:", error);
+      console.error(error);
+
       cart = [];
 
     }
@@ -304,23 +364,26 @@
 
     if (cart.length === 0) {
 
-      document.getElementById("checkoutContent").style.display = "none";
-      document.getElementById("emptyCart").style.display = "block";
+      document.getElementById("checkoutContent")
+        .style.display = "none";
 
-      return false;
+      document.getElementById("emptyCart")
+        .style.display = "block";
+
+      return;
+
     }
 
 
     calculateTotal();
 
-    return true;
   }
 
 
   /*
-    ============================
+    =========================
     CALCULATE TOTAL
-    ============================
+    =========================
   */
 
   function calculateTotal() {
@@ -335,7 +398,8 @@
 
     cart.forEach((item) => {
 
-      const price = Number(item.price) || 0;
+      const price =
+        Number(item.price) || 0;
 
       const quantity =
         Number(item.quantity) || 1;
@@ -349,8 +413,7 @@
       itemsList.innerHTML += `
         <div class="row">
           <span>
-            ${item.name || "Product"}
-            × ${quantity}
+            ${item.name || "Product"} × ${quantity}
           </span>
 
           <span>
@@ -368,46 +431,80 @@
     const delivery = 50;
 
     const finalTotal =
-      productTotal + shipping + delivery;
+      productTotal +
+      shipping +
+      delivery;
 
 
     document.getElementById("productTotal")
-      .textContent = productTotal.toFixed(2);
+      .textContent =
+      productTotal.toFixed(2);
 
     document.getElementById("shippingFee")
-      .textContent = shipping.toFixed(2);
+      .textContent =
+      shipping.toFixed(2);
 
     document.getElementById("deliveryFee")
-      .textContent = delivery.toFixed(2);
+      .textContent =
+      delivery.toFixed(2);
 
     document.getElementById("finalTotal")
-      .textContent = finalTotal.toFixed(2);
-
-
-    console.log("Product Total:", productTotal);
-    console.log("Shipping:", shipping);
-    console.log("Delivery:", delivery);
-    console.log("Final Total:", finalTotal);
+      .textContent =
+      finalTotal.toFixed(2);
 
   }
 
 
   /*
-    ============================
+    =========================
+    LOGIN CHECK
+    =========================
+  */
+
+  onAuthStateChanged(auth, (user) => {
+
+    currentUser = user;
+
+
+    if (!user) {
+
+      document.getElementById("loginBox")
+        .style.display = "block";
+
+      document.getElementById("submitBtn")
+        .disabled = true;
+
+    } else {
+
+      document.getElementById("loginBox")
+        .style.display = "none";
+
+      document.getElementById("submitBtn")
+        .disabled = false;
+
+      console.log(
+        "Customer logged in:",
+        user.email
+      );
+
+    }
+
+  });
+
+
+  /*
+    =========================
     LOAD UPI
-    ============================
+    =========================
   */
 
   async function loadUPI() {
 
     try {
 
-      const settingsRef =
-        collection(db, "paymentSettings");
-
       const q =
         query(
-          settingsRef,
+          collection(db, "paymentSettings"),
           where("__name__", "==", "settings")
         );
 
@@ -427,57 +524,39 @@
 
       }
 
-
-      showUPI();
-
     } catch (error) {
 
-      console.error("UPI error:", error);
-
-      // Firebase fail hone par bhi default UPI chalega
-      currentUpiId =
-        "mrsunnykumar@ptaxis";
-
-      showUPI();
+      console.error(
+        "UPI loading error:",
+        error
+      );
 
     }
+
+
+    showUPI();
 
   }
 
 
   /*
-    ============================
-    SHOW UPI + QR
-    ============================
+    =========================
+    SHOW UPI
+    =========================
   */
 
   function showUPI() {
 
     document.getElementById("upiId")
-      .textContent = currentUpiId;
-
-
-    const productTotal =
-      Number(
-        document.getElementById("productTotal")
-          .textContent
-      ) || 0;
-
-
-    const shipping =
-      Number(
-        document.getElementById("shippingFee")
-          .textContent
-      ) || 0;
-
-
-    const delivery = 50;
+      .textContent =
+      currentUpiId;
 
 
     const finalTotal =
-      productTotal +
-      shipping +
-      delivery;
+      Number(
+        document.getElementById("finalTotal")
+          .textContent
+      ) || 0;
 
 
     const qr =
@@ -486,7 +565,9 @@
     qr.innerHTML = "";
 
 
-    if (typeof QRCode !== "undefined") {
+    if (
+      typeof QRCode !== "undefined"
+    ) {
 
       const upiUrl =
         "upi://pay" +
@@ -495,14 +576,20 @@
         "&pn=" +
         encodeURIComponent("SBKART") +
         "&am=" +
-        encodeURIComponent(finalTotal.toFixed(2)) +
+        encodeURIComponent(
+          finalTotal.toFixed(2)
+        ) +
         "&cu=INR";
 
 
       new QRCode(qr, {
+
         text: upiUrl,
+
         width: 200,
+
         height: 200
+
       });
 
     }
@@ -511,12 +598,33 @@
 
 
   /*
-    ============================
+    =========================
     SUBMIT ORDER
-    ============================
+    =========================
   */
 
   window.submitOrder = async function() {
+
+    const errorBox =
+      document.getElementById("errorBox");
+
+    errorBox.style.display = "none";
+
+
+    /*
+      LOGIN REQUIRED
+    */
+
+    if (!currentUser) {
+
+      showError(
+        "Order place karne ke liye pehle Login karo."
+      );
+
+      return;
+
+    }
+
 
     const name =
       document.getElementById("customerName")
@@ -535,54 +643,76 @@
         .value.trim();
 
 
-    const errorBox =
-      document.getElementById("errorBox");
-
-    errorBox.style.display = "none";
-
-
     if (!name) {
-      showError("Please enter your name.");
+
+      showError(
+        "Please enter your name."
+      );
+
       return;
+
     }
 
 
     if (!/^[0-9]{10}$/.test(mobile)) {
-      showError("Please enter a valid 10-digit mobile number.");
+
+      showError(
+        "Please enter a valid 10-digit mobile number."
+      );
+
       return;
+
     }
 
 
     if (!address) {
-      showError("Please enter your address.");
+
+      showError(
+        "Please enter your address."
+      );
+
       return;
+
     }
 
 
     if (!/^[0-9]{12}$/.test(utr)) {
-      showError("Please enter a valid 12-digit UTR number.");
+
+      showError(
+        "Please enter a valid 12-digit UTR."
+      );
+
       return;
+
     }
 
 
     if (!cart.length) {
-      showError("Your cart is empty.");
+
+      showError(
+        "Your cart is empty."
+      );
+
       return;
+
     }
 
 
-    const productTotal =
-      cart.reduce((total, item) => {
+    let productTotal = 0;
 
-        const price =
-          Number(item.price) || 0;
 
-        const quantity =
-          Number(item.quantity) || 1;
+    cart.forEach((item) => {
 
-        return total + price * quantity;
+      const price =
+        Number(item.price) || 0;
 
-      }, 0);
+      const quantity =
+        Number(item.quantity) || 1;
+
+      productTotal +=
+        price * quantity;
+
+    });
 
 
     const shippingFee =
@@ -603,9 +733,20 @@
         .slice(-8);
 
 
+    /*
+      IMPORTANT:
+      Customer email is saved here.
+    */
+
     const orderData = {
 
       orderId: orderId,
+
+      customerEmail:
+        currentUser.email,
+
+      customerUid:
+        currentUser.uid,
 
       customerName: name,
 
@@ -619,19 +760,26 @@
 
       items: cart,
 
-      productTotal: productTotal,
+      productTotal:
+        productTotal,
 
-      shippingFee: shippingFee,
+      shippingFee:
+        shippingFee,
 
-      deliveryFee: deliveryFee,
+      deliveryFee:
+        deliveryFee,
 
-      finalTotal: finalTotal,
+      finalTotal:
+        finalTotal,
 
-      paymentStatus: "Pending",
+      paymentStatus:
+        "Pending",
 
-      orderStatus: "Pending",
+      orderStatus:
+        "Pending",
 
-      createdAt: serverTimestamp()
+      createdAt:
+        serverTimestamp()
 
     };
 
@@ -648,20 +796,15 @@
 
     try {
 
-      const docRef =
-        await addDoc(
-          collection(db, "orders"),
-          orderData
-        );
-
-
-      console.log(
-        "Order submitted:",
-        docRef.id
+      await addDoc(
+        collection(db, "orders"),
+        orderData
       );
 
 
-      localStorage.removeItem("sbkartCart");
+      localStorage.removeItem(
+        "sbkartCart"
+      );
 
 
       window.location.href =
@@ -684,7 +827,7 @@
 
 
       showError(
-        "Order submit nahi hua. Firebase Rules check karein. Error: " +
+        "Order submit nahi hua: " +
         error.message
       );
 
@@ -694,9 +837,9 @@
 
 
   /*
-    ============================
+    =========================
     ERROR
-    ============================
+    =========================
   */
 
   function showError(message) {
@@ -704,17 +847,19 @@
     const box =
       document.getElementById("errorBox");
 
-    box.textContent = message;
+    box.textContent =
+      message;
 
-    box.style.display = "block";
+    box.style.display =
+      "block";
 
   }
 
 
   /*
-    ============================
+    =========================
     START
-    ============================
+    =========================
   */
 
   loadCart();
@@ -724,4 +869,4 @@
 </script>
 
 </body>
-</html>
+  </html>
