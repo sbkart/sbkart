@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SBKART - Online Shopping</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -19,18 +14,21 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
+      background: #f5f5f5;
+      color: #222;
     }
 
     header {
-      background: #111827;
+      background: #111;
       color: white;
-      padding: 15px;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: auto;
       display: flex;
       align-items: center;
@@ -45,305 +43,380 @@
 
     .header-buttons {
       display: flex;
+      align-items: center;
       gap: 8px;
       flex-wrap: wrap;
-      justify-content: flex-end;
     }
 
     .header-buttons a,
     .cart-button {
       background: white;
-      color: #111827;
+      color: #111;
+      border: none;
       padding: 9px 12px;
-      border-radius: 7px;
+      border-radius: 6px;
       text-decoration: none;
       font-size: 14px;
       cursor: pointer;
-      border: none;
+      font-weight: bold;
+    }
+
+    .cart-button {
+      background: #ffcc00;
     }
 
     .hero {
+      background: linear-gradient(135deg, #111, #444);
+      color: white;
       text-align: center;
-      padding: 35px 15px;
-      background: white;
+      padding: 45px 20px;
     }
 
     .hero h1 {
       margin: 0 0 10px;
-      font-size: 30px;
+      font-size: 34px;
     }
 
     .hero p {
       margin: 0;
-      color: #6b7280;
+      font-size: 17px;
+    }
+
+    .categories {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .categories h2 {
+      margin-bottom: 12px;
+    }
+
+    .category-buttons {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .category-button {
+      white-space: nowrap;
+      border: none;
+      background: white;
+      padding: 11px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      font-weight: bold;
+    }
+
+    .category-button.active {
+      background: #111;
+      color: white;
     }
 
     .products {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px 15px;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px 40px;
     }
 
     .products h2 {
-      text-align: center;
       margin-bottom: 20px;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
     }
 
-    .product {
+    .product-card {
       background: white;
-      padding: 12px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .product-img {
-      width: 100%;
-      height: 150px;
       overflow: hidden;
-      border-radius: 8px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+      padding-bottom: 15px;
     }
 
-    .product-img img {
+    .product-image {
       width: 100%;
-      height: 100%;
+      height: 220px;
       object-fit: cover;
+      background: #eee;
     }
 
-    .product h3 {
-      margin: 10px 0 5px;
-      font-size: 17px;
+    .product-info {
+      padding: 14px;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .product-category {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 7px;
+    }
+
+    .product-description {
+      font-size: 14px;
+      color: #555;
+      min-height: 38px;
+      margin-bottom: 8px;
     }
 
     .price {
-      color: #16a34a;
+      font-size: 20px;
       font-weight: bold;
-      font-size: 18px;
       margin-bottom: 10px;
     }
 
-    .add-btn {
+    .size-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .size-select {
+      width: 100%;
+      padding: 9px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: white;
+    }
+
+    .add-button {
       width: 100%;
       padding: 11px;
       border: none;
-      border-radius: 7px;
-      background: #16a34a;
+      border-radius: 6px;
+      background: #111;
       color: white;
-      font-size: 15px;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
     }
 
-    .add-btn:active {
-      transform: scale(0.98);
+    .add-button:hover {
+      background: #333;
     }
 
     .message {
       text-align: center;
-      margin: 20px 0;
-      color: #6b7280;
+      padding: 30px;
+      color: #555;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      padding: 20px;
+      display: none;
     }
 
     footer {
-      background: #111827;
+      background: #111;
       color: white;
       text-align: center;
       padding: 20px;
-      margin-top: 30px;
     }
 
     @media (max-width: 600px) {
-
       .header-inner {
         align-items: flex-start;
         flex-direction: column;
       }
 
       .header-buttons {
-        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .header-buttons a,
+      .cart-button {
+        flex: 1;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 28px;
       }
 
       .product-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
       }
 
+      .product-image {
+        height: 170px;
+      }
+
+      .product-info {
+        padding: 10px;
+      }
+
+      .product-name {
+        font-size: 16px;
+      }
+
+      .price {
+        font-size: 18px;
+      }
     }
-
   </style>
-
 </head>
-
 
 <body>
 
-
 <header>
-
   <div class="header-inner">
 
     <div class="logo">
       🛍️ SBKART
     </div>
 
-
     <div class="header-buttons">
+      <a href="register.html">Create Account</a>
+      <a href="login.html">Login</a>
 
-      <!-- Create Account -->
-
-      <a href="register.html">
-        Create Account
-      </a>
-
-
-      <!-- Login -->
-
-      <a href="login.html">
-        Login
-      </a>
-
-
-      <!-- Cart -->
-
-      <button
-        type="button"
-        class="cart-button"
-        onclick="openCart()"
-      >
-
-        🛒 Cart
-        (<span id="cartCount">0</span>)
-
+      <button class="cart-button" onclick="openCart()">
+        🛒 Cart (<span id="cartCount">0</span>)
       </button>
-
     </div>
 
   </div>
-
 </header>
 
 
-
 <section class="hero">
+  <h1>Welcome to SBKART</h1>
+  <p>Shop Fashion, Electronics & More</p>
+</section>
 
-  <h1>
-    Welcome to SBKART
-  </h1>
 
-  <p>
-    Shop your favourite products online
-  </p>
+<section class="categories">
+
+  <h2>Categories</h2>
+
+  <div class="category-buttons">
+
+    <button
+      class="category-button active"
+      onclick="filterCategory('All', this)">
+      All
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory(&quot;Men's Clothing&quot;, this)">
+      👨 Men's Clothing
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory(&quot;Women's Clothing&quot;, this)">
+      👩 Women's Clothing
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory(&quot;Kids' Clothing&quot;, this)">
+      🧒 Kids' Clothing
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory('Footwear', this)">
+      👟 Footwear
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory('Electronics', this)">
+      📱 Electronics
+    </button>
+
+    <button
+      class="category-button"
+      onclick="filterCategory('Home & Kitchen', this)">
+      🏠 Home & Kitchen
+    </button>
+
+  </div>
 
 </section>
 
 
-
 <section class="products">
 
-  <h2>
-    Popular Products
-  </h2>
+  <h2>Popular Products</h2>
 
-
-  <div
-    id="loading"
-    class="message"
-  >
+  <div id="loading" class="message">
     Loading products...
   </div>
 
-
   <div
     class="product-grid"
-    id="productGrid"
-  ></div>
-
+    id="productGrid">
+  </div>
 
   <div
     id="error"
-    class="message"
-    style="display:none;color:#dc2626;"
-  >
+    class="error">
     Products load nahi ho pa rahe hain.
   </div>
 
 </section>
 
 
-
 <footer>
-
-  © 2026 SBKART
-
+  © 2026 SBKART. All Rights Reserved.
 </footer>
-
 
 
 <script type="module">
 
   import {
     initializeApp
-  }
-  from
-  "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
   import {
     getFirestore,
     collection,
     getDocs
-  }
-  from
-  "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
   const firebaseConfig = {
 
-    apiKey:
-      "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
+    apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
 
-    authDomain:
-      "sbkart-fa406.firebaseapp.com",
+    authDomain: "sbkart-fa406.firebaseapp.com",
 
-    projectId:
-      "sbkart-fa406",
+    projectId: "sbkart-fa406",
 
-    storageBucket:
-      "sbkart-fa406.firebasestorage.app",
+    storageBucket: "sbkart-fa406.firebasestorage.app",
 
-    messagingSenderId:
-      "890129821807",
+    messagingSenderId: "890129821807",
 
-    appId:
-      "1:890129821807:web:3e1478e1f8b914ff29dd9a"
+    appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
 
   };
 
 
+  const app = initializeApp(firebaseConfig);
 
-  const app =
-    initializeApp(firebaseConfig);
-
-
-  const db =
-    getFirestore(app);
-
-
-
-  // =========================
-  // CART
-  // =========================
+  const db = getFirestore(app);
 
 
   let cart =
-    JSON.parse(
-      localStorage.getItem("sbkartCart")
-    ) || [];
+    JSON.parse(localStorage.getItem("sbkartCart")) || [];
 
+  let allProducts = [];
 
 
   function updateCartCount() {
@@ -351,44 +424,36 @@
     const count =
       document.getElementById("cartCount");
 
-
     let total = 0;
 
+    cart.forEach(item => {
 
-    cart.forEach(function(item) {
-
-      total +=
-        Number(item.quantity || 1);
+      total += Number(item.quantity || 1);
 
     });
 
-
     count.textContent = total;
-
   }
-
-
-
-  // =========================
-  // ADD TO CART
-  // =========================
 
 
   function addToCart(
     id,
     name,
     price,
-    image
+    image,
+    category,
+    size
   ) {
 
+    /*
+      Same product + same size =
+      quantity increase
+    */
 
-    const existing =
-      cart.find(function(item) {
-
-        return item.id === id;
-
-      });
-
+    const existing = cart.find(item =>
+      item.id === id &&
+      item.size === size
+    );
 
 
     if (existing) {
@@ -396,9 +461,7 @@
       existing.quantity =
         Number(existing.quantity || 1) + 1;
 
-    }
-
-    else {
+    } else {
 
       cart.push({
 
@@ -410,12 +473,15 @@
 
         image: image,
 
+        category: category,
+
+        size: size || "",
+
         quantity: 1
 
       });
 
     }
-
 
 
     localStorage.setItem(
@@ -424,280 +490,350 @@
     );
 
 
-
     updateCartCount();
 
 
-
-    /*
-      IMPORTANT:
-
-      Add to Cart ke baad
-      koi page redirect nahi hoga.
-
-      Customer same Index page par rahega.
-    */
-
+    alert("Product Cart mein add ho gaya 🛒");
   }
 
 
-
-  window.addToCart =
-    addToCart;
-
-
-
-  // =========================
-  // OPEN CART
-  // =========================
+  window.addToCart = addToCart;
 
 
   function openCart() {
 
-    window.location.href =
-      "cart.html";
+    window.location.href = "cart.html";
 
   }
 
 
-
-  window.openCart =
-    openCart;
+  window.openCart = openCart;
 
 
+  function filterCategory(
+    category,
+    clickedButton
+  ) {
 
-  // =========================
-  // LOAD PRODUCTS
-  // =========================
+    document
+      .querySelectorAll(".category-button")
+      .forEach(button => {
+
+        button.classList.remove("active");
+
+      });
+
+
+    clickedButton.classList.add("active");
+
+
+    displayProducts(category);
+  }
+
+
+  window.filterCategory = filterCategory;
+
+
+  function displayProducts(category = "All") {
+
+    const productGrid =
+      document.getElementById("productGrid");
+
+
+    productGrid.innerHTML = "";
+
+
+    let productsToShow;
+
+
+    if (category === "All") {
+
+      productsToShow = allProducts;
+
+    } else {
+
+      productsToShow =
+        allProducts.filter(product => {
+
+          return String(product.category || "")
+            .toLowerCase()
+            === category.toLowerCase();
+
+        });
+
+    }
+
+
+    if (productsToShow.length === 0) {
+
+      productGrid.innerHTML =
+        `<div class="message">
+          Is category mein abhi koi product nahi hai.
+        </div>`;
+
+      return;
+    }
+
+
+    productsToShow.forEach(product => {
+
+      const card =
+        document.createElement("div");
+
+      card.className = "product-card";
+
+
+      const image =
+        document.createElement("img");
+
+      image.className = "product-image";
+
+      image.src =
+        product.image || "";
+
+      image.alt =
+        product.name || "Product";
+
+
+      const info =
+        document.createElement("div");
+
+      info.className = "product-info";
+
+
+      const name =
+        document.createElement("div");
+
+      name.className = "product-name";
+
+      name.textContent =
+        product.name || "Product";
+
+
+      const categoryText =
+        document.createElement("div");
+
+      categoryText.className =
+        "product-category";
+
+      categoryText.textContent =
+        product.category || "General";
+
+
+      const description =
+        document.createElement("div");
+
+      description.className =
+        "product-description";
+
+      description.textContent =
+        product.description || "";
+
+
+      const price =
+        document.createElement("div");
+
+      price.className = "price";
+
+      price.textContent =
+        "₹" + Number(product.price || 0);
+
+
+      info.appendChild(name);
+
+      info.appendChild(categoryText);
+
+      info.appendChild(description);
+
+      info.appendChild(price);
+
+
+      /*
+        Clothing ke liye size selector
+      */
+
+      const clothingCategories = [
+        "Men's Clothing",
+        "Women's Clothing",
+        "Kids' Clothing",
+        "Fashion"
+      ];
+
+
+      const isClothing =
+        clothingCategories
+          .map(x => x.toLowerCase())
+          .includes(
+            String(product.category || "")
+              .toLowerCase()
+          );
+
+
+      let sizeSelect = null;
+
+
+      if (isClothing) {
+
+        const sizeLabel =
+          document.createElement("label");
+
+        sizeLabel.className =
+          "size-label";
+
+        sizeLabel.textContent =
+          "Select Size:";
+
+
+        sizeSelect =
+          document.createElement("select");
+
+        sizeSelect.className =
+          "size-select";
+
+
+        const sizes =
+          Array.isArray(product.sizes)
+            ? product.sizes
+            : [
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL"
+              ];
+
+
+        sizes.forEach(size => {
+
+          const option =
+            document.createElement("option");
+
+          option.value = size;
+
+          option.textContent = size;
+
+          sizeSelect.appendChild(option);
+
+        });
+
+
+        info.appendChild(sizeLabel);
+
+        info.appendChild(sizeSelect);
+      }
+
+
+      const button =
+        document.createElement("button");
+
+      button.className = "add-button";
+
+      button.textContent =
+        "🛒 Add to Cart";
+
+
+      button.onclick = () => {
+
+        const selectedSize =
+          sizeSelect
+            ? sizeSelect.value
+            : "";
+
+
+        addToCart(
+
+          product.id,
+
+          product.name,
+
+          product.price,
+
+          product.image,
+
+          product.category,
+
+          selectedSize
+
+        );
+
+      };
+
+
+      info.appendChild(button);
+
+      card.appendChild(image);
+
+      card.appendChild(info);
+
+      productGrid.appendChild(card);
+
+    });
+
+  }
 
 
   async function loadProducts() {
 
-
-    const productGrid =
-      document.getElementById(
-        "productGrid"
-      );
-
-
     const loading =
-      document.getElementById(
-        "loading"
-      );
-
+      document.getElementById("loading");
 
     const error =
-      document.getElementById(
-        "error"
-      );
+      document.getElementById("error");
 
 
     try {
 
-
       const snapshot =
         await getDocs(
-          collection(
-            db,
-            "products"
-          )
+          collection(db, "products")
         );
 
 
-      loading.style.display =
-        "none";
+      allProducts = [];
 
 
-      productGrid.innerHTML =
-        "";
+      snapshot.forEach(doc => {
 
+        const product =
+          doc.data();
 
-      snapshot.forEach(
-        function(doc) {
 
+        allProducts.push({
 
-          const product =
-            doc.data();
+          id: doc.id,
 
+          ...product
 
-          const name =
-            product.name || "Product";
+        });
 
+      });
 
-          const price =
-            Number(
-              product.price || 0
-            );
 
+      loading.style.display = "none";
 
-          const image =
-            product.image || "";
 
-
-
-          const card =
-            document.createElement(
-              "div"
-            );
-
-
-          card.className =
-            "product";
-
-
-
-          const imageBox =
-            document.createElement(
-              "div"
-            );
-
-
-          imageBox.className =
-            "product-img";
-
-
-
-          const img =
-            document.createElement(
-              "img"
-            );
-
-
-          img.src =
-            image;
-
-
-          img.alt =
-            name;
-
-
-
-          imageBox.appendChild(
-            img
-          );
-
-
-
-          const title =
-            document.createElement(
-              "h3"
-            );
-
-
-          title.textContent =
-            name;
-
-
-
-          const priceBox =
-            document.createElement(
-              "div"
-            );
-
-
-          priceBox.className =
-            "price";
-
-
-          priceBox.textContent =
-            "₹" + price;
-
-
-
-          const button =
-            document.createElement(
-              "button"
-            );
-
-
-          button.className =
-            "add-btn";
-
-
-          button.type =
-            "button";
-
-
-          button.textContent =
-            "🛒 Add to Cart";
-
-
-
-          button.onclick =
-            function() {
-
-              addToCart(
-                doc.id,
-                name,
-                price,
-                image
-              );
-
-            };
-
-
-
-          card.appendChild(
-            imageBox
-          );
-
-
-          card.appendChild(
-            title
-          );
-
-
-          card.appendChild(
-            priceBox
-          );
-
-
-          card.appendChild(
-            button
-          );
-
-
-
-          productGrid.appendChild(
-            card
-          );
-
-        }
-      );
+      displayProducts("All");
 
 
       updateCartCount();
 
 
-    }
+    } catch (err) {
 
-    catch (err) {
+      console.error(err);
 
+      loading.style.display = "none";
 
-      console.error(
-        "Product error:",
-        err
-      );
-
-
-      loading.style.display =
-        "none";
-
-
-      error.style.display =
-        "block";
+      error.style.display = "block";
 
     }
 
   }
-
 
 
   loadProducts();
 
 </script>
 
-
 </body>
-
 </html>
