@@ -167,6 +167,11 @@ footer {
   <div id="cart" style="text-align:right;margin:10px 15px;">
   <span style="background:#16a34a;color:white;padding:10px 15px;border-radius:8px;cursor:pointer;">
     🛒 Cart (<span id="cartCount">0</span>)
+    <div id="cartBox" style="display:none;background:white;color:#111;padding:15px;border-radius:8px;margin-top:10px;">
+  <h3>Your Cart</h3>
+  <div id="cartItems"></div>
+  <p><b>Total: ₹<span id="cartTotal">0</span></b></p>
+    </div>
   </span>
 </div>
   <h2>Popular Products</h2>
@@ -232,6 +237,25 @@ function addToCart(id, name, price) {
   alert(name + " Cart mein add ho gaya!");
 }
   window.addToCart = addToCart;
+  document.getElementById("cart").onclick = function() {
+  document.getElementById("cartBox").style.display = "block";
+
+  const cartItems = document.getElementById("cartItems");
+  const cartTotal = document.getElementById("cartTotal");
+
+  cartItems.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach((item) => {
+    cartItems.innerHTML += `
+      <p>${item.name} - ₹${item.price}</p>
+    `;
+    total += Number(item.price);
+  });
+
+  cartTotal.textContent = total;
+};
   loadProducts();
         </script>
 </body>
