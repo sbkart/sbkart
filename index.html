@@ -218,7 +218,19 @@ footer {
       `;
     });
   }
+let cart = [];
 
+function addToCart(id, name, price) {
+  cart.push({
+    id: id,
+    name: name,
+    price: price
+  });
+
+  document.getElementById("cartCount").textContent = cart.length;
+
+  alert(name + " Cart mein add ho gaya!");
+}
   loadProducts();
         </script>
 </body>
