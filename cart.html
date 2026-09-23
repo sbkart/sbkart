@@ -4,673 +4,543 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SBKART - Cart</title>
+  <title>Cart - SBKART</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f5f5;
-      color: #222;
-    }
-
-    header {
-      background: #111;
-      color: white;
-      padding: 15px;
-    }
-
-    .header-inner {
-      max-width: 1100px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .home-button {
-      background: white;
-      color: #111;
-      text-decoration: none;
-      padding: 9px 13px;
-      border-radius: 6px;
-      font-weight: bold;
+      margin: 0;
+      padding: 20px;
     }
 
     .container {
-      max-width: 1100px;
-      margin: 25px auto;
-      padding: 0 15px;
+      max-width: 700px;
+      margin: auto;
     }
 
     h1 {
-      margin-bottom: 20px;
+      text-align: center;
+      color: #222;
     }
 
     .cart-item {
       background: white;
-      border-radius: 10px;
       padding: 15px;
       margin-bottom: 15px;
+      border-radius: 10px;
       display: flex;
       gap: 15px;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .cart-image {
-      width: 100px;
-      height: 100px;
+    .cart-item img {
+      width: 90px;
+      height: 90px;
       object-fit: cover;
       border-radius: 8px;
-      background: #eee;
     }
 
-    .item-info {
+    .details {
       flex: 1;
     }
 
-    .item-name {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 7px;
+    .details h3 {
+      margin: 0 0 8px;
     }
 
-    .item-price {
+    .price {
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
-    .item-size {
+    .size {
       color: #555;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .item-total {
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .quantity-controls {
+    .quantity-box {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       margin-top: 8px;
     }
 
-    .quantity-controls button {
-      width: 32px;
-      height: 32px;
+    .quantity-box button {
+      width: 35px;
+      height: 35px;
+      padding: 0;
+      font-size: 20px;
       border: none;
-      background: #111;
-      color: white;
       border-radius: 5px;
+      background: #222;
+      color: white;
       cursor: pointer;
-      font-size: 18px;
     }
 
     .quantity {
-      min-width: 25px;
-      text-align: center;
       font-weight: bold;
     }
 
-    .remove-button {
-      background: #d60000;
+    .remove {
+      margin-top: 8px;
+      background: #dc2626;
       color: white;
       border: none;
-      padding: 8px 11px;
+      padding: 7px 10px;
       border-radius: 5px;
       cursor: pointer;
-      margin-top: 10px;
     }
 
     .summary {
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .summary-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 12px;
+      padding: 8px 0;
     }
 
-    .final-row {
-      border-top: 1px solid #ddd;
-      padding-top: 15px;
+    .final {
+      border-top: 2px solid #222;
+      margin-top: 8px;
+      padding-top: 12px;
       font-size: 20px;
       font-weight: bold;
     }
 
-    .checkout-button {
+    .checkout {
       width: 100%;
-      padding: 13px;
-      background: #111;
+      padding: 14px;
+      margin-top: 15px;
+      background: #0a8f3c;
       color: white;
       border: none;
       border-radius: 7px;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 17px;
       cursor: pointer;
-      margin-top: 15px;
     }
 
-    .continue-button {
-      display: block;
-      text-align: center;
-      margin-top: 12px;
-      padding: 12px;
-      background: #eee;
-      color: #111;
-      text-decoration: none;
+    .continue {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      background: #222;
+      color: white;
+      border: none;
       border-radius: 7px;
-      font-weight: bold;
+      font-size: 17px;
+      cursor: pointer;
     }
 
     .empty {
       background: white;
-      padding: 40px 20px;
+      padding: 30px;
       text-align: center;
       border-radius: 10px;
-    }
-
-    .empty a {
-      display: inline-block;
-      margin-top: 15px;
-      background: #111;
-      color: white;
-      padding: 11px 18px;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-
-    @media (max-width: 600px) {
-
-      .cart-item {
-        align-items: flex-start;
-      }
-
-      .cart-image {
-        width: 80px;
-        height: 80px;
-      }
-
-      .item-name {
-        font-size: 16px;
-      }
-
-      .logo {
-        font-size: 20px;
-      }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <div class="header-inner">
-
-    <div class="logo">
-      🛍️ SBKART
-    </div>
-
-    <a href="index.html" class="home-button">
-      🏠 Home
-    </a>
-
-  </div>
-</header>
-
-
 <div class="container">
 
-  <h1>🛒 Your Cart</h1>
+  <h1>🛒 My Cart</h1>
 
-  <div id="cartItems"></div>
+  <div id="cartContainer"></div>
 
-  <div id="summary"></div>
+  <div id="summary" class="summary" style="display:none;">
+
+    <div class="summary-row">
+      <span>Product Total</span>
+      <span id="productTotal">₹0</span>
+    </div>
+
+    <div class="summary-row">
+      <span>Shipping Fee (5%)</span>
+      <span id="shippingFee">₹0</span>
+    </div>
+
+    <div class="summary-row">
+      <span>Delivery Fee</span>
+      <span>₹50</span>
+    </div>
+
+    <div class="summary-row final">
+      <span>Final Total</span>
+      <span id="finalTotal">₹0</span>
+    </div>
+
+    <button
+      class="checkout"
+      onclick="goToCheckout()"
+    >
+      Proceed to Checkout
+    </button>
+
+    <button
+      class="continue"
+      onclick="window.location.href='index.html'"
+    >
+      Continue Shopping
+    </button>
+
+  </div>
 
 </div>
 
 
 <script type="module">
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-  import {
-    getAuth,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-
-  const firebaseConfig = {
-
-    apiKey: "AIzaSyDUjtrUOtcMYtgPFjzfLwMk_c37DytwRA",
-
-    authDomain: "sbkart-fa406.firebaseapp.com",
-
-    projectId: "sbkart-fa406",
-
-    storageBucket: "sbkart-fa406.firebasestorage.app",
-
-    messagingSenderId: "890129821807",
-
-    appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
-
-  };
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
-  const app =
-    initializeApp(firebaseConfig);
+const firebaseConfig = {
 
-  const auth =
-    getAuth(app);
+  apiKey: "AIzaSyDUjtrUO2tcMYtgPFjzfLwMk_c37DytwRA",
 
+  authDomain: "sbkart-fa406.firebaseapp.com",
 
-  let cart =
-    JSON.parse(
-      localStorage.getItem("sbkartCart")
-    ) || [];
+  projectId: "sbkart-fa406",
 
+  storageBucket: "sbkart-fa406.firebasestorage.app",
 
-  onAuthStateChanged(auth, (user) => {
+  messagingSenderId: "890129821807",
 
-    if (!user) {
+  appId: "1:890129821807:web:3e1478e1f8b914ff29dd9a"
 
-      alert(
-        "Cart use karne ke liye pehle Login karein."
-      );
-
-      window.location.href =
-        "register.html";
-
-      return;
-    }
-
-    displayCart();
-
-  });
+};
 
 
-  function saveCart() {
+const app =
+  initializeApp(firebaseConfig);
 
-    localStorage.setItem(
-      "sbkartCart",
-      JSON.stringify(cart)
+const auth =
+  getAuth(app);
+
+
+let currentUser = null;
+
+let cart =
+  JSON.parse(
+    localStorage.getItem("sbkartCart")
+  ) || [];
+
+
+/* LOGIN CHECK */
+
+onAuthStateChanged(auth, (user) => {
+
+  if (!user) {
+
+    alert(
+      "Cart use karne ke liye pehle Create Account aur Login karein."
     );
 
+    window.location.href =
+      "register.html";
+
+    return;
+  }
+
+  currentUser = user;
+
+  displayCart();
+
+});
+
+
+/* DISPLAY CART */
+
+function displayCart() {
+
+  const container =
+    document.getElementById("cartContainer");
+
+  container.innerHTML = "";
+
+
+  if (cart.length === 0) {
+
+    container.innerHTML = `
+      <div class="empty">
+
+        <h2>Cart Empty Hai 🛒</h2>
+
+        <p>
+          Abhi cart mein koi product nahi hai.
+        </p>
+
+        <button
+          class="continue"
+          onclick="window.location.href='index.html'"
+        >
+          Shopping Start Karein
+        </button>
+
+      </div>
+    `;
+
+    document.getElementById("summary").style.display =
+      "none";
+
+    return;
   }
 
 
-  function increaseQuantity(index) {
+  cart.forEach((item, index) => {
 
-    cart[index].quantity =
-      Number(cart[index].quantity || 1) + 1;
+    const quantity =
+      Number(item.quantity || 1);
 
-    saveCart();
+    const price =
+      Number(item.price || 0);
 
-    displayCart();
 
-  }
+    const div =
+      document.createElement("div");
 
+    div.className =
+      "cart-item";
 
-  function decreaseQuantity(index) {
 
-    const currentQuantity =
-      Number(cart[index].quantity || 1);
+    div.innerHTML = `
 
+      <img
+        src="${escapeHtml(item.image)}"
+        alt="${escapeHtml(item.name)}"
+        onerror="this.style.display='none'"
+      >
 
-    if (currentQuantity > 1) {
+      <div class="details">
 
-      cart[index].quantity =
-        currentQuantity - 1;
+        <h3>
+          ${escapeHtml(item.name)}
+        </h3>
 
-    } else {
-
-      cart.splice(index, 1);
-
-    }
-
-
-    saveCart();
-
-    displayCart();
-
-  }
-
-
-  function removeItem(index) {
-
-    cart.splice(index, 1);
-
-    saveCart();
-
-    displayCart();
-
-  }
-
-
-  window.increaseQuantity =
-    increaseQuantity;
-
-  window.decreaseQuantity =
-    decreaseQuantity;
-
-  window.removeItem =
-    removeItem;
-
-
-  function displayCart() {
-
-    const cartItems =
-      document.getElementById("cartItems");
-
-    const summary =
-      document.getElementById("summary");
-
-
-    cartItems.innerHTML = "";
-
-    summary.innerHTML = "";
-
-
-    if (cart.length === 0) {
-
-      cartItems.innerHTML = `
-        <div class="empty">
-
-          <h2>Your Cart is Empty</h2>
-
-          <p>
-            Abhi cart mein koi product nahi hai.
-          </p>
-
-          <a href="index.html">
-            Continue Shopping
-          </a>
-
-        </div>
-      `;
-
-      return;
-    }
-
-
-    let productTotal = 0;
-
-
-    cart.forEach((item, index) => {
-
-      const quantity =
-        Number(item.quantity || 1);
-
-      const price =
-        Number(item.price || 0);
-
-      const itemTotal =
-        price * quantity;
-
-
-      productTotal += itemTotal;
-
-
-      const itemDiv =
-        document.createElement("div");
-
-      itemDiv.className =
-        "cart-item";
-
-
-      const image =
-        document.createElement("img");
-
-      image.className =
-        "cart-image";
-
-      image.src =
-        item.image || "";
-
-      image.alt =
-        item.name || "Product";
-
-
-      const info =
-        document.createElement("div");
-
-      info.className =
-        "item-info";
-
-
-      const name =
-        document.createElement("div");
-
-      name.className =
-        "item-name";
-
-      name.textContent =
-        item.name || "Product";
-
-
-      const priceDiv =
-        document.createElement("div");
-
-      priceDiv.className =
-        "item-price";
-
-      priceDiv.textContent =
-        "Price: ₹" + price;
-
-
-      info.appendChild(name);
-
-      info.appendChild(priceDiv);
-
-
-      if (item.size) {
-
-        const sizeDiv =
-          document.createElement("div");
-
-        sizeDiv.className =
-          "item-size";
-
-        sizeDiv.textContent =
-          "Size: " + item.size;
-
-        info.appendChild(sizeDiv);
-
-      }
-
-
-      const quantityControls =
-        document.createElement("div");
-
-      quantityControls.className =
-        "quantity-controls";
-
-
-      const minusButton =
-        document.createElement("button");
-
-      minusButton.textContent =
-        "−";
-
-      minusButton.onclick =
-        () => decreaseQuantity(index);
-
-
-      const quantityDisplay =
-        document.createElement("span");
-
-      quantityDisplay.className =
-        "quantity";
-
-      quantityDisplay.textContent =
-        String(quantity);
-
-
-      const plusButton =
-        document.createElement("button");
-
-      plusButton.textContent =
-        "+";
-
-      plusButton.onclick =
-        () => increaseQuantity(index);
-
-
-      quantityControls.appendChild(
-        minusButton
-      );
-
-      quantityControls.appendChild(
-        quantityDisplay
-      );
-
-      quantityControls.appendChild(
-        plusButton
-      );
-
-
-      info.appendChild(
-        quantityControls
-      );
-
-
-      const itemTotalDiv =
-        document.createElement("div");
-
-      itemTotalDiv.className =
-        "item-total";
-
-      itemTotalDiv.textContent =
-        "Product Total: ₹" + itemTotal;
-
-
-      info.appendChild(
-        itemTotalDiv
-      );
-
-
-      const removeButton =
-        document.createElement("button");
-
-      removeButton.className =
-        "remove-button";
-
-      removeButton.textContent =
-        "Remove";
-
-
-      removeButton.onclick =
-        () => removeItem(index);
-
-
-      info.appendChild(
-        removeButton
-      );
-
-
-      itemDiv.appendChild(image);
-
-      itemDiv.appendChild(info);
-
-      cartItems.appendChild(itemDiv);
-
-    });
-
-
-    const shippingFee =
-      Math.round(productTotal * 0.05);
-
-    const deliveryFee =
-      50;
-
-    const finalTotal =
-      productTotal +
-      shippingFee +
-      deliveryFee;
-
-
-    summary.innerHTML = `
-
-      <div class="summary">
-
-        <h2>Order Summary</h2>
-
-        <div class="summary-row">
-          <span>Product Total</span>
-          <span>₹${productTotal}</span>
+        <div class="price">
+          ₹${price.toFixed(2)}
         </div>
 
-        <div class="summary-row">
-          <span>Shipping Fee (5%)</span>
-          <span>₹${shippingFee}</span>
-        </div>
+        ${
+          item.size
+          ? `
+            <div class="size">
+              Size: ${escapeHtml(item.size)}
+            </div>
+          `
+          : ""
+        }
 
-        <div class="summary-row">
-          <span>Delivery Fee</span>
-          <span>₹${deliveryFee}</span>
-        </div>
+        <div class="quantity-box">
 
-        <div class="summary-row final-row">
-          <span>Final Total</span>
-          <span>₹${finalTotal}</span>
+          <button
+            onclick="decreaseQuantity(${index})"
+          >
+            −
+          </button>
+
+          <span class="quantity">
+            ${quantity}
+          </span>
+
+          <button
+            onclick="increaseQuantity(${index})"
+          >
+            +
+          </button>
+
         </div>
 
         <button
-          class="checkout-button"
-          onclick="goToCheckout()">
-          Proceed to Checkout
+          class="remove"
+          onclick="removeItem(${index})"
+        >
+          Remove
         </button>
-
-        <a
-          href="index.html"
-          class="continue-button">
-          Continue Shopping
-        </a>
 
       </div>
 
     `;
 
+
+    container.appendChild(div);
+
+  });
+
+
+  updateSummary();
+
+}
+
+
+/* INCREASE */
+
+window.increaseQuantity = function(index) {
+
+  cart[index].quantity =
+    Number(cart[index].quantity || 1) + 1;
+
+  saveCart();
+
+};
+
+
+/* DECREASE */
+
+window.decreaseQuantity = function(index) {
+
+  const quantity =
+    Number(cart[index].quantity || 1);
+
+
+  if (quantity > 1) {
+
+    cart[index].quantity =
+      quantity - 1;
+
+  } else {
+
+    cart.splice(index, 1);
+
   }
 
 
-  function goToCheckout() {
+  saveCart();
 
-    if (cart.length === 0) {
+};
 
-      alert("Cart empty hai.");
 
-      return;
-    }
+/* REMOVE */
 
+window.removeItem = function(index) {
+
+  cart.splice(index, 1);
+
+  saveCart();
+
+};
+
+
+/* SAVE CART */
+
+function saveCart() {
+
+  localStorage.setItem(
+    "sbkartCart",
+    JSON.stringify(cart)
+  );
+
+  displayCart();
+
+}
+
+
+/* SUMMARY */
+
+function updateSummary() {
+
+  let productTotal = 0;
+
+
+  cart.forEach(item => {
+
+    const quantity =
+      Number(item.quantity || 1);
+
+    const price =
+      Number(item.price || 0);
+
+    productTotal +=
+      price * quantity;
+
+  });
+
+
+  const shippingFee =
+    Math.round(productTotal * 0.05);
+
+  const deliveryFee =
+    50;
+
+  const finalTotal =
+    productTotal +
+    shippingFee +
+    deliveryFee;
+
+
+  document.getElementById("productTotal").textContent =
+    "₹" + productTotal.toFixed(2);
+
+  document.getElementById("shippingFee").textContent =
+    "₹" + shippingFee.toFixed(2);
+
+  document.getElementById("finalTotal").textContent =
+    "₹" + finalTotal.toFixed(2);
+
+
+  document.getElementById("summary").style.display =
+    "block";
+
+}
+
+
+/* CHECKOUT */
+
+window.goToCheckout = function() {
+
+  if (!currentUser) {
+
+    alert(
+      "Checkout ke liye pehle Create Account aur Login karein."
+    );
 
     window.location.href =
-      "checkout.html";
+      "register.html";
 
+    return;
   }
 
 
-  window.goToCheckout =
-    goToCheckout;
+  if (cart.length === 0) {
+
+    alert("Cart empty hai.");
+
+    return;
+  }
+
+
+  window.location.href =
+    "checkout.html";
+
+};
+
+
+/* ESCAPE HTML */
+
+function escapeHtml(value) {
+
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
 
 </script>
 
