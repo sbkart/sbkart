@@ -66,7 +66,12 @@
     }
 
     .logout-button {
-      background: #ff5555 !important;
+      background: #e53935 !important;
+      color: white !important;
+    }
+
+    .orders-button {
+      background: #1976d2 !important;
       color: white !important;
     }
 
@@ -74,7 +79,7 @@
       display: none;
       background: #222;
       color: white;
-      padding: 8px 10px;
+      padding: 9px 12px;
       border-radius: 6px;
       font-size: 13px;
     }
@@ -253,7 +258,6 @@
 
       .header-buttons a,
       .header-buttons button {
-        flex: 1;
         text-align: center;
       }
 
@@ -302,7 +306,7 @@
 
     <div class="header-buttons">
 
-      <!-- Login ke pehle -->
+      <!-- LOGGED OUT -->
       <a href="register.html" id="registerBtn">
         Create Account
       </a>
@@ -311,13 +315,14 @@
         Login
       </a>
 
-      <!-- Login ke baad -->
+      <!-- LOGGED IN -->
       <div class="user-box" id="userBox">
         👤 <span id="userName"></span>
       </div>
 
       <a
         href="my-orders.html"
+        class="orders-button"
         id="ordersBtn"
         style="display:none;">
         📦 Order History
@@ -331,6 +336,7 @@
         🚪 Logout
       </button>
 
+      <!-- CART -->
       <button
         class="cart-button"
         onclick="openCart()">
@@ -410,7 +416,7 @@
 
 <section class="products">
 
-  <h2>Popular Products</h2>
+  <h2>Products</h2>
 
   <div id="loading" class="message">
     Loading products...
@@ -474,10 +480,8 @@
   const app =
     initializeApp(firebaseConfig);
 
-
   const db =
     getFirestore(app);
-
 
   const auth =
     getAuth(app);
@@ -485,18 +489,18 @@
 
   let currentUser = null;
 
+  let authChecked = false;
 
   let cart =
     JSON.parse(
       localStorage.getItem("sbkartCart")
     ) || [];
 
-
   let allProducts = [];
 
 
   /*
-    LOGIN STATUS
+    AUTH STATE
   */
 
   onAuthStateChanged(
@@ -505,70 +509,79 @@
 
       currentUser = user;
 
-      const registerBtn =
-        document.getElementById("registerBtn");
+      authChecked = true;
 
-      const loginBtn =
-        document.getElementById("loginBtn");
-
-      const userBox =
-        document.getElementById("userBox");
-
-      const userName =
-        document.getElementById("userName");
-
-      const ordersBtn =
-        document.getElementById("ordersBtn");
-
-      const logoutBtn =
-        document.getElementById("logoutBtn");
-
-
-      if (user) {
-
-        /*
-          LOGIN HAI
-        */
-
-        registerBtn.style.display = "none";
-
-        loginBtn.style.display = "none";
-
-        userBox.style.display = "block";
-
-        ordersBtn.style.display = "block";
-
-        logoutBtn.style.display = "block";
-
-
-        userName.textContent =
-          user.displayName ||
-          user.email ||
-          "Customer";
-
-      } else {
-
-        /*
-          LOGIN NAHI HAI
-        */
-
-        registerBtn.style.display = "block";
-
-        loginBtn.style.display = "block";
-
-        userBox.style.display = "none";
-
-        ordersBtn.style.display = "none";
-
-        logoutBtn.style.display = "none";
-
-      }
-
-
-      updateCartCount();
+      updateUserInterface();
 
     }
   );
+
+
+  /*
+    USER INTERFACE
+  */
+
+  function updateUserInterface() {
+
+    const registerBtn =
+      document.getElementById("registerBtn");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    const userBox =
+      document.getElementById("userBox");
+
+    const userName =
+      document.getElementById("userName");
+
+    const ordersBtn =
+      document.getElementById("ordersBtn");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+
+    if (currentUser) {
+
+      /* LOGIN HAI */
+
+      registerBtn.style.display = "none";
+
+      loginBtn.style.display = "none";
+
+      userBox.style.display = "block";
+
+      ordersBtn.style.display = "block";
+
+      logoutBtn.style.display = "block";
+
+
+      userName.textContent =
+        currentUser.displayName ||
+        currentUser.email ||
+        "Customer";
+
+    } else {
+
+      /* LOGIN NAHI HAI */
+
+      registerBtn.style.display = "block";
+
+      loginBtn.style.display = "block";
+
+      userBox.style.display = "none";
+
+      ordersBtn.style.display = "none";
+
+      logoutBtn.style.display = "none";
+
+    }
+
+
+    updateCartCount();
+
+  }
 
 
   /*
@@ -581,12 +594,15 @@
 
       await signOut(auth);
 
+      currentUser = null;
+
       localStorage.removeItem("sbkartCart");
 
-      alert("Logout successful.");
+      updateUserInterface();
 
-      window.location.href =
-        "index.html";
+      updateCartCount();
+
+      alert("Logout successful.");
 
     } catch (error) {
 
@@ -614,17 +630,16 @@
     const count =
       document.getElementById("cartCount");
 
-
     let total = 0;
 
+    cart.forEach(
+      item => {
 
-    cart.forEach(item => {
+        total +=
+          Number(item.quantity || 1);
 
-      total +=
-        Number(item.quantity || 1);
-
-    });
-
+      }
+    );
 
     count.textContent =
       total;
@@ -646,10 +661,16 @@
   ) {
 
     /*
-      LOGIN CHECK
+      Firebase ka currentUser
+      direct check kar rahe hain.
+      Isse page load timing ki problem nahi hogi.
     */
 
-    if (!currentUser) {
+    const user =
+      auth.currentUser;
+
+
+    if (!user) {
 
       alert(
         "Pehle Create Account karke Login karein."
@@ -663,17 +684,23 @@
     }
 
 
+    currentUser = user;
+
+
     const existing =
-      cart.find(item =>
-        item.id === id &&
-        item.size === size
+      cart.find(
+        item =>
+          item.id === id &&
+          item.size === size
       );
 
 
     if (existing) {
 
       existing.quantity =
-        Number(existing.quantity || 1) + 1;
+        Number(
+          existing.quantity || 1
+        ) + 1;
 
     } else {
 
@@ -724,7 +751,11 @@
 
   function openCart() {
 
-    if (!currentUser) {
+    const user =
+      auth.currentUser;
+
+
+    if (!user) {
 
       alert(
         "Cart use karne ke liye pehle Create Account aur Login karein."
@@ -759,13 +790,15 @@
 
     document
       .querySelectorAll(".category-button")
-      .forEach(button => {
+      .forEach(
+        button => {
 
-        button.classList.remove(
-          "active"
-        );
+          button.classList.remove(
+            "active"
+          );
 
-      });
+        }
+      );
 
 
     clickedButton.classList.add(
@@ -798,8 +831,7 @@
       );
 
 
-    productGrid.innerHTML =
-      "";
+    productGrid.innerHTML = "";
 
 
     let productsToShow;
@@ -814,15 +846,11 @@
 
       productsToShow =
         allProducts.filter(
-          product => {
-
-            return String(
+          product =>
+            String(
               product.category || ""
-            ).toLowerCase()
-            ===
-            category.toLowerCase();
-
-          }
+            ).toLowerCase() ===
+            category.toLowerCase()
         );
 
     }
@@ -866,8 +894,7 @@
           product.image || "";
 
         image.alt =
-          product.name ||
-          "Product";
+          product.name || "Product";
 
 
         const info =
@@ -888,8 +915,7 @@
           "product-name";
 
         name.textContent =
-          product.name ||
-          "Product";
+          product.name || "Product";
 
 
         const categoryText =
@@ -901,8 +927,7 @@
           "product-category";
 
         categoryText.textContent =
-          product.category ||
-          "General";
+          product.category || "General";
 
 
         const description =
@@ -914,8 +939,7 @@
           "product-description";
 
         description.textContent =
-          product.description ||
-          "";
+          product.description || "";
 
 
         const price =
@@ -943,9 +967,7 @@
           description
         );
 
-        info.appendChild(
-          price
-        );
+        info.appendChild(price);
 
 
         const clothingCategories = [
@@ -968,12 +990,9 @@
                 x.toLowerCase()
             )
             .includes(
-
               String(
                 product.category || ""
-              )
-              .toLowerCase()
-
+              ).toLowerCase()
             );
 
 
@@ -1066,8 +1085,8 @@
 
           const selectedSize =
             sizeSelect
-            ? sizeSelect.value
-            : "";
+              ? sizeSelect.value
+              : "";
 
 
           addToCart(
@@ -1147,15 +1166,11 @@
       snapshot.forEach(
         doc => {
 
-          const product =
-            doc.data();
-
-
           allProducts.push({
 
             id: doc.id,
 
-            ...product
+            ...doc.data()
 
           });
 
@@ -1179,10 +1194,8 @@
 
       console.error(err);
 
-
       loading.style.display =
         "none";
-
 
       error.style.display =
         "block";
@@ -1197,4 +1210,4 @@
 </script>
 
 </body>
-</html>
+  </html>
