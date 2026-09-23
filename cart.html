@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SBKART - Cart</title>
 
   <style>
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -97,6 +100,17 @@
       margin-top: 0;
     }
 
+    .summary p {
+      display: flex;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+
+    .final-total {
+      font-size: 21px;
+      color: #16a34a;
+    }
+
     .checkout {
       display: block;
       width: 100%;
@@ -125,7 +139,22 @@
       text-align: center;
       border-radius: 10px;
     }
+
+    @media (max-width: 500px) {
+
+      .cart-item {
+        align-items: flex-start;
+      }
+
+      .cart-item img {
+        width: 80px;
+        height: 80px;
+      }
+
+    }
+
   </style>
+
 </head>
 
 <body>
@@ -134,27 +163,49 @@
   <h1>🛒 SBKART Cart</h1>
 </header>
 
+
 <div class="cart-container">
 
   <div id="cartItems"></div>
 
+
   <div class="summary">
+
     <h2>Order Summary</h2>
 
     <p>
-      Total Items:
+      <span>Total Items:</span>
       <b><span id="totalItems">0</span></b>
     </p>
 
     <p>
-      Total Amount:
-      <b>₹<span id="cartTotal">0</span></b>
+      <span>Product Total:</span>
+      <b>₹<span id="cartTotal">0.00</span></b>
+    </p>
+
+    <p>
+      <span>Shipping Fee (5%):</span>
+      <b>₹<span id="shippingFee">0.00</span></b>
+    </p>
+
+    <p>
+      <span>Delivery Fee:</span>
+      <b>₹<span id="deliveryFee">50.00</span></b>
+    </p>
+
+    <hr>
+
+    <p class="final-total">
+      <span>Final Total:</span>
+      <b>₹<span id="finalTotal">0.00</span></b>
     </p>
 
     <button class="checkout" onclick="goToCheckout()">
       Proceed to Checkout
     </button>
+
   </div>
+
 
   <a class="back" href="index.html">
     ← Continue Shopping
@@ -162,30 +213,51 @@
 
 </div>
 
+
 <script>
 
-  let cart = JSON.parse(localStorage.getItem("sbkartCart")) || [];
+  let cart =
+    JSON.parse(localStorage.getItem("sbkartCart")) || [];
+
 
   function renderCart() {
 
-    const cartItems = document.getElementById("cartItems");
+    const cartItems =
+      document.getElementById("cartItems");
 
-    const cartTotal = document.getElementById("cartTotal");
+    const cartTotal =
+      document.getElementById("cartTotal");
 
-    const totalItems = document.getElementById("totalItems");
+    const totalItems =
+      document.getElementById("totalItems");
+
+    const shippingFee =
+      document.getElementById("shippingFee");
+
+    const deliveryFee =
+      document.getElementById("deliveryFee");
+
+    const finalTotal =
+      document.getElementById("finalTotal");
+
 
     cartItems.innerHTML = "";
 
-    let total = 0;
+
+    let productTotal = 0;
 
     let itemsCount = 0;
+
 
     if (cart.length === 0) {
 
       cartItems.innerHTML = `
         <div class="empty">
+
           <h2>Your Cart is Empty</h2>
+
           <p>Add some products to your cart.</p>
+
         </div>
       `;
 
@@ -194,54 +266,78 @@
       return;
     }
 
+
     document.querySelector(".summary").style.display = "block";
+
 
     cart.forEach((item, index) => {
 
-      const quantity = item.quantity || 1;
+      const quantity =
+        item.quantity || 1;
 
-      const itemTotal = Number(item.price) * quantity;
 
-      total += itemTotal;
+      const itemTotal =
+        Number(item.price) * quantity;
+
+
+      productTotal += itemTotal;
 
       itemsCount += quantity;
+
 
       cartItems.innerHTML += `
 
         <div class="cart-item">
 
-          <img src="${item.image}" alt="${item.name}">
+          <img
+            src="${item.image}"
+            alt="${item.name}"
+          >
+
 
           <div class="cart-info">
 
             <h3>${item.name}</h3>
 
+
             <div class="price">
-              ₹${item.price} each
+              ₹${Number(item.price).toFixed(2)} each
             </div>
+
 
             <div class="qty">
 
-              <button onclick="changeQty(${index}, -1)">
+              <button
+                onclick="changeQty(${index}, -1)"
+              >
                 −
               </button>
+
 
               <span>
                 ${quantity}
               </span>
 
-              <button onclick="changeQty(${index}, 1)">
+
+              <button
+                onclick="changeQty(${index}, 1)"
+              >
                 +
               </button>
 
             </div>
 
+
             <p>
               Item Total:
-              <b>₹${itemTotal}</b>
+              <b>₹${itemTotal.toFixed(2)}</b>
             </p>
 
-            <button class="remove" onclick="removeItem(${index})">
+
+            <button
+              class="remove"
+              onclick="removeItem(${index})"
+            >
               Remove
             </button>
 
@@ -250,53 +346,108 @@
         </div>
 
       `;
+
     });
 
-    cartTotal.textContent = total;
 
-    totalItems.textContent = itemsCount;
+    // Shipping fee = 5% of Product Total
+
+    const shipping =
+      productTotal * 0.05;
+
+
+    // Fixed delivery fee
+
+    const delivery = 50;
+
+
+    // Final amount
+
+    const final =
+      productTotal + shipping + delivery;
+
+
+    totalItems.textContent =
+      itemsCount;
+
+
+    cartTotal.textContent =
+      productTotal.toFixed(2);
+
+
+    shippingFee.textContent =
+      shipping.toFixed(2);
+
+
+    deliveryFee.textContent =
+      delivery.toFixed(2);
+
+
+    finalTotal.textContent =
+      final.toFixed(2);
+
   }
+
 
 
   function changeQty(index, change) {
 
-    cart[index].quantity = (cart[index].quantity || 1) + change;
+    cart[index].quantity =
+      (cart[index].quantity || 1) + change;
+
 
     if (cart[index].quantity < 1) {
+
       cart[index].quantity = 1;
+
     }
+
 
     localStorage.setItem(
       "sbkartCart",
       JSON.stringify(cart)
     );
 
+
     renderCart();
+
   }
+
 
 
   function removeItem(index) {
 
     cart.splice(index, 1);
 
+
     localStorage.setItem(
       "sbkartCart",
       JSON.stringify(cart)
     );
 
+
     renderCart();
+
   }
+
 
 
   function goToCheckout() {
 
     if (cart.length === 0) {
+
       alert("Your cart is empty.");
+
       return;
+
     }
 
-    window.location.href = "checkout.html";
+
+    window.location.href =
+      "checkout.html";
+
   }
+
 
 
   renderCart();
