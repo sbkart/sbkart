@@ -218,14 +218,27 @@ footer {
           </div>
           <h3>${product.name}</h3>
           <div class="price">₹${product.price || 0}</div>
-          <button onclick="addToCart('${doc.id}', '${product.name}', ${product.price || 0})">Buy Now</button>
+          <button onclick="addToCart('${doc.id}', '${product.name}', ${product.price || 0}, '${product.image}')">Buy Now</button>
         </div>
       `;
     });
   }
 let cart = [];
 
-function addToCart(id, name, price) {
+function addToCart(id, name, price, image) {
+  cart.push({
+    id: id,
+    name: name,
+    price: price,
+    image: image
+  });
+
+  localStorage.setItem("sbkartCart", JSON.stringify(cart));
+
+  document.getElementById("cartCount").textContent = cart.length;
+
+  window.location.href = "cart.html";
+}
   cart.push({
     id: id,
     name: name,
